@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const path = require('path');
+const compression = require('compression');
 const { OpenAI } = require('openai');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const systemPrompt = require('./systemPrompt');
@@ -56,6 +57,7 @@ setInterval(() => {
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use(compression()); // Compressione gzip per performance
 
 // Serve static files from the parent directory (public_html)
 app.use(express.static(path.join(__dirname, '../')));
@@ -193,6 +195,16 @@ app.get('/api/metrics', (req, res) => {
 app.post('/api/metrics/reset', (req, res) => {
     cognitiveMetrics.reset();
     res.json({ message: 'Metrics reset successfully' });
+});
+
+// Endpoint per feedback analytics
+app.get('/api/feedback/stats', (req, res) => {
+    // Restituisce statistiche aggregate (non dati personali)
+    const stats = {
+        message: 'Feedback analytics disponibili solo lato client (localStorage)',
+        hint: 'Controlla localStorage per feedback individuali'
+    };
+    res.json(stats);
 });
 
 app.listen(PORT, '0.0.0.0', () => {

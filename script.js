@@ -97,12 +97,82 @@ document.addEventListener('DOMContentLoaded', () => {
         messageDiv.classList.add('message');
         messageDiv.classList.add(isUser ? 'user-message' : 'bot-message');
         if (isError) messageDiv.classList.add('error-message');
-        messageDiv.textContent = text;
+        
+        const textSpan = document.createElement('span');
+        textSpan.classList.add('message-text');
+        textSpan.textContent = text;
+        messageDiv.appendChild(textSpan);
+        
+        // Aggiungi feedback buttons solo per messaggi bot non di errore
+        if (!isUser && !isError) {
+            const feedbackDiv = document.createElement('div');
+            feedbackDiv.classList.add('feedback-buttons');
+            feedbackDiv.innerHTML = `
+                <button class="feedback-btn" data-type="helpful" title="Mi ha fatto riflettere" aria-label="Risposta utile">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+                <button class="feedback-btn" data-type="direct" title="Troppo diretta" aria-label="Risposta troppo diretta">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            `;
+            messageDiv.appendChild(feedbackDiv);
+            
+            // Event listeners per feedback
+            feedbackDiv.querySelectorAll('.feedback-btn').forEach(btn => {
+                btn.addEventListener('click', () => handleFeedback(btn, messageDiv));
+            });
+        }
+        
         messageDiv.setAttribute('role', 'log');
         messageDiv.setAttribute('aria-live', 'polite');
         chatContainer.appendChild(messageDiv);
         chatContainer.scrollTop = chatContainer.scrollHeight;
         return messageDiv;
+    }
+
+    function handleFeedback(button, messageDiv) {
+        const type = button.dataset.type;
+        const feedbackDiv = messageDiv.querySelector('.feedback-buttons');
+        
+        // Disabilita tutti i pulsanti dopo il click
+        feedbackDiv.querySelectorAll('.feedback-btn').forEach(btn => {
+            btn.disabled = true;
+            btn.classList.remove('active');
+        });
+        
+        // Attiva il pulsante cliccato
+        button.classList.add('active');
+        
+        // Salva feedback in localStorage per analytics
+        saveFeedback(type);
+        
+        // Mostra messaggio di ringraziamento
+        if (type === 'direct') {
+            const hint = document.createElement('div');
+            hint.classList.add('feedback-hint');
+            hint.textContent = 'Grazie! TinkAi imparerà da questo.';
+            messageDiv.appendChild(hint);
+            setTimeout(() => hint.remove(), 3000);
+        }
+    }
+
+    function saveFeedback(type) {
+        try {
+            const feedback = JSON.parse(localStorage.getItem('tinkai_feedback') || '[]');
+            feedback.push({
+                type: type,
+                timestamp: new Date().toISOString()
+            });
+            // Mantieni solo ultimi 100 feedback
+            if (feedback.length > 100) feedback.shift();
+            localStorage.setItem('tinkai_feedback', JSON.stringify(feedback));
+        } catch (e) {
+            console.warn('Could not save feedback:', e);
+        }
     }
 
     function showTypingIndicator() {
@@ -171,7 +241,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const data = await response.json();
             removeTypingIndicator();
-            addMessage(data.reply);
+            addMessage(data.reply, false, false);
             
             // Aggiorna lo storico solo se tutto è andato a buon fine
             chatHistory.push({ role: 'user', text: text });

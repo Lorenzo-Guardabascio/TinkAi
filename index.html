@@ -10,11 +10,33 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!-- Privacy Banner -->
+    <div id="privacy-banner" class="privacy-banner" style="display: none;">
+        <div class="privacy-content">
+            <p>
+                <strong>🔐 Privacy & Trasparenza</strong><br>
+                TinkAi salva le conversazioni solo nel tuo browser (localStorage). 
+                I messaggi vengono inviati a <span id="provider-name">Gemini/OpenAI</span> per elaborazione, 
+                ma non vengono memorizzati sui nostri server.
+            </p>
+            <div class="privacy-actions">
+                <button onclick="acceptPrivacy()" class="btn btn-primary">Ho capito</button>
+                <a href="#" onclick="showPrivacyDetails(); return false;" class="privacy-link">Dettagli</a>
+            </div>
+        </div>
+    </div>
+
     <div class="container">
         <header>
             <div class="logo">TinkAi</div>
             <div class="payoff">The intelligence that keeps you thinking</div>
             <div class="header-actions">
+                <a href="feedback.html" class="icon-btn" title="Analisi feedback" aria-label="Feedback analytics">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M20 21V19C20 17.9391 19.5786 16.9217 18.8284 16.1716C18.0783 15.4214 17.0609 15 16 15H8C6.93913 15 5.92172 15.4214 5.17157 16.1716C4.42143 16.9217 4 17.9391 4 19V21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M12 11C14.2091 11 16 9.20914 16 7C16 4.79086 14.2091 3 12 3C9.79086 3 8 4.79086 8 7C8 9.20914 9.79086 11 12 11Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </a>
                 <a href="metrics.html" class="icon-btn" title="Visualizza metriche cognitive" aria-label="Visualizza metriche">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M3 3V21H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -54,6 +76,65 @@
             </button>
         </footer>
     </div>
+
+    <!-- Privacy Details Modal -->
+    <div id="privacy-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h2>Privacy & Gestione Dati</h2>
+            <div class="modal-body">
+                <h3>📝 Cosa salviamo</h3>
+                <ul>
+                    <li><strong>Nel tuo browser (localStorage):</strong> Storico conversazioni (max 24h), feedback risposte</li>
+                    <li><strong>Sui nostri server:</strong> Solo metriche aggregate anonime (numero interazioni, TinkAi Score)</li>
+                </ul>
+
+                <h3>🌐 Dove vanno i dati</h3>
+                <ul>
+                    <li>I tuoi messaggi sono inviati a <strong id="provider-modal">Gemini AI (Google)</strong> per elaborazione</li>
+                    <li>Google/OpenAI processano i dati secondo le loro policy</li>
+                    <li>Non condividiamo i tuoi dati con terze parti</li>
+                </ul>
+
+                <h3>🗑️ Controllo totale</h3>
+                <ul>
+                    <li>Usa il pulsante "Nuova conversazione" per cancellare tutto</li>
+                    <li>Cancella i dati del browser per rimuovere localStorage</li>
+                    <li>Non richiediamo account o login</li>
+                </ul>
+
+                <h3>📊 Metriche cognitive</h3>
+                <p>Tracciamo come TinkAi si comporta (quante domande fa, lunghezza risposte) per migliorare il sistema. 
+                   Questi dati sono completamente anonimi.</p>
+            </div>
+            <button onclick="closePrivacyModal()" class="btn btn-primary">Chiudi</button>
+        </div>
+    </div>
+
     <script src="script.js"></script>
+    <script>
+        // Privacy banner management
+        function checkPrivacyConsent() {
+            const consent = localStorage.getItem('tinkai_privacy_consent');
+            if (!consent) {
+                document.getElementById('privacy-banner').style.display = 'block';
+            }
+        }
+
+        function acceptPrivacy() {
+            localStorage.setItem('tinkai_privacy_consent', 'true');
+            document.getElementById('privacy-banner').style.display = 'none';
+        }
+
+        function showPrivacyDetails() {
+            document.getElementById('privacy-modal').style.display = 'flex';
+        }
+
+        function closePrivacyModal() {
+            document.getElementById('privacy-modal').style.display = 'none';
+        }
+
+        // Check consent on load
+        checkPrivacyConsent();
+    </script>
 </body>
 </html>

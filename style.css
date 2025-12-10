@@ -10,6 +10,19 @@
     --error-bg: #ffebee;
 }
 
+/* Dark Mode */
+[data-theme="dark"] {
+    --bg-color: #1a1a1a;
+    --text-color: #e0e0e0;
+    --accent-color: #ffffff;
+    --secondary-text: #999999;
+    --message-bg-user: #2a2a2a;
+    --message-bg-bot: #252525;
+    --border-color: #333333;
+    --error-color: #ef5350;
+    --error-bg: #3a2020;
+}
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -25,6 +38,7 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .container {
@@ -49,6 +63,27 @@ header {
     right: 0;
     display: flex;
     gap: 10px;
+}
+
+.theme-toggle {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 8px;
+    cursor: pointer;
+    color: var(--secondary-text);
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
+}
+
+.theme-toggle:hover {
+    background-color: var(--message-bg-user);
+    color: var(--text-color);
+    border-color: var(--text-color);
 }
 
 .icon-btn {
@@ -453,4 +488,37 @@ input[type="text"]:disabled {
         padding: 20px;
         max-height: 90vh;
     }
+}
+
+/* Toast Notifications */
+.toast {
+    position: fixed;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--accent-color);
+    color: var(--bg-color);
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 3000;
+    opacity: 0;
+    transition: all 0.3s ease;
+    pointer-events: none;
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* Dark mode transitions */
+* {
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+/* Preserve fast transitions for interactive elements */
+button, input, .feedback-btn, .icon-btn {
+    transition: all 0.2s ease !important;
 }

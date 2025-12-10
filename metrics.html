@@ -159,6 +159,9 @@
     </div>
 
     <script>
+        // Inizializza tema da localStorage
+        const savedTheme = localStorage.getItem('tinkai_theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
         async function loadMetrics() {
             try {
                 const API_PORT = 3000;
@@ -215,6 +218,15 @@
                     </div>
                 </div>
 
+                <div class="metrics-grid" style="margin-top: 30px;">
+                    <div style="grid-column: 1 / -1;">
+                        <h3 style="margin-bottom: 15px;">📅 Trend Ultimi 7 Giorni</h3>
+                        <div id="daily-chart" style="font-size: 0.85rem; color: var(--secondary-text);">
+                            ${generateDailyChart(data.dailyStats)}
+                        </div>
+                    </div>
+                </div>
+
                 <div class="actions">
                     <button class="btn" onclick="loadMetrics()">🔄 Aggiorna</button>
                     <button class="btn" onclick="resetMetrics()">🗑️ Reset</button>
@@ -223,6 +235,37 @@
             `;
             
             document.getElementById('metrics-content').innerHTML = html;
+        }
+
+        function generateDailyChart(dailyStats) {
+            if (!dailyStats || Object.keys(dailyStats).length === 0) {
+                return '<p style="text-align: center; padding: 20px;">Nessun dato giornaliero disponibile</p>';
+            }
+
+            const dates = Object.keys(dailyStats).sort().slice(-7); // Ultimi 7 giorni
+            
+            let html = '<div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; text-align: center;">';
+            
+            dates.forEach(date => {
+                const stats = dailyStats[date];
+                const dateObj = new Date(date);
+                const dayName = dateObj.toLocaleDateString('it-IT', { weekday: 'short' });
+                const dayNum = dateObj.getDate();
+                
+                html += `
+                    <div style="padding: 10px; background: var(--message-bg-user); border-radius: 8px;">
+                        <div style="font-weight: 500; margin-bottom: 5px;">${dayName}</div>
+                        <div style="font-size: 1.2rem; color: var(--accent-color); margin-bottom: 5px;">${dayNum}</div>
+                        <div style="font-size: 0.75rem;">
+                            ${stats.interactions} 💬<br>
+                            ${stats.questions} ❓
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            return html;
         }
 
         async function resetMetrics() {

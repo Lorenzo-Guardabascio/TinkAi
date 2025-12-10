@@ -10,6 +10,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Carica conversazione salvata
     loadConversation();
 
+    // Inizializza tema
+    initTheme();
+
     // Focus input on load
     userInput.focus();
 
@@ -58,7 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function exportConversation() {
         if (chatHistory.length === 0) {
-            alert('Nessuna conversazione da esportare.');
+            showToast('⚠️ Nessuna conversazione da esportare');
             return;
         }
 
@@ -81,6 +84,8 @@ document.addEventListener('DOMContentLoaded', () => {
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
+        
+        showToast('📥 Conversazione esportata');
     }
 
     // Esponi funzioni globalmente per i pulsanti
@@ -91,6 +96,91 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
     window.exportTinkAiChat = exportConversation;
+
+    // Theme Management
+    function initTheme() {
+        const savedTheme = localStorage.getItem('tinkai_theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        updateThemeIcon(savedTheme);
+        
+        const themeToggle = document.getElementById('theme-toggle');
+        if (themeToggle) {
+            themeToggle.addEventListener('click', toggleTheme);
+        }
+    }
+
+    function toggleTheme() {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('tinkai_theme', newTheme);
+        updateThemeIcon(newTheme);
+        
+        showToast(newTheme === 'dark' ? '🌙 Tema scuro attivato' : '☀️ Tema chiaro attivato');
+    }
+
+    function updateThemeIcon(theme) {
+        const sunIcon = document.querySelector('.sun-icon');
+        const moonIcon = document.querySelector('.moon-icon');
+        
+        if (sunIcon && moonIcon) {
+            if (theme === 'dark') {
+                sunIcon.style.display = 'none';
+                moonIcon.style.display = 'block';
+            } else {
+                sunIcon.style.display = 'block';
+                moonIcon.style.display = 'none';
+            }
+        }
+    }
+
+    // Toast Notifications
+    function showToast(message, duration = 2000) {
+        // Rimuovi toast esistenti
+        const existingToast = document.querySelector('.toast');
+        if (existingToast) existingToast.remove();
+        
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        
+        // Trigger animation
+        setTimeout(() => toast.classList.add('show'), 10);
+        
+        // Remove after duration
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => toast.remove(), 300);
+        }, duration);
+    }
+
+    // Keyboard Shortcuts
+    document.addEventListener('keydown', (e) => {
+        // Ctrl/Cmd + K: Clear conversation
+        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+            e.preventDefault();
+            window.clearTinkAiChat();
+        }
+        
+        // Ctrl/Cmd + E: Export conversation
+        if ((e.ctrlKey || e.metaKey) && e.key === 'e') {
+            e.preventDefault();
+            window.exportTinkAiChat();
+        }
+        
+        // Ctrl/Cmd + D: Toggle dark mode
+        if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
+            e.preventDefault();
+            toggleTheme();
+        }
+        
+        // Escape: Focus input
+        if (e.key === 'Escape') {
+            userInput.focus();
+        }
+    });
 
     function addMessage(text, isUser = false, isError = false) {
         const messageDiv = document.createElement('div');
@@ -247,6 +337,8 @@ document.addEventListener('DOMContentLoaded', () => {
             chatHistory.push({ role: 'user', text: text });
             chatHistory.push({ role: 'model', text: data.reply });
             saveConversation();
+            
+            showToast('💬 Risposta ricevuta');
 
         } catch (error) {
             console.error('Error:', error);

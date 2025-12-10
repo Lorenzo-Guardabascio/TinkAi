@@ -6,10 +6,35 @@
     <title>TinkAi - Feedback Analytics</title>
     <link rel="stylesheet" href="style.css">
     <style>
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            height: auto !important;
+            min-height: 100vh;
+            display: block !important;
+            overflow-y: auto !important;
+        }
+        
         .analytics-container {
             max-width: 900px;
             margin: 40px auto;
             padding: 30px;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: var(--secondary-text);
+            text-decoration: none;
+        }
+        
+        .back-link:hover {
+            color: var(--text-color);
+        }
+        
+        h1 {
+            color: var(--text-color);
+            margin-bottom: 10px;
         }
         
         .stats-grid {
@@ -21,7 +46,7 @@
         
         .stat-card {
             padding: 25px;
-            background: white;
+            background: var(--bg-color);
             border: 1px solid var(--border-color);
             border-radius: 12px;
             text-align: center;
@@ -40,7 +65,7 @@
         }
         
         .chart-container {
-            background: white;
+            background: var(--bg-color);
             border: 1px solid var(--border-color);
             border-radius: 12px;
             padding: 30px;
@@ -87,7 +112,7 @@
 </head>
 <body>
     <div class="analytics-container">
-        <a href="index.html" class="back-link" style="display: inline-block; margin-bottom: 20px; color: var(--secondary-text); text-decoration: none;">← Torna alla chat</a>
+        <a href="index.html" class="back-link">← Torna alla chat</a>
         
         <h1>📊 Feedback Analytics</h1>
         <p style="color: var(--secondary-text); margin-bottom: 30px;">
@@ -139,6 +164,9 @@
     </div>
 
     <script>
+        // Inizializza tema da localStorage
+        const savedTheme = localStorage.getItem('tinkai_theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
         function loadFeedbackAnalytics() {
             try {
                 const feedback = JSON.parse(localStorage.getItem('tinkai_feedback') || '[]');

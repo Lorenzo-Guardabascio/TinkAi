@@ -12,6 +12,7 @@ class CognitiveMetrics {
             reflectivePrompts: 0,
             averageResponseLength: 0,
         };
+        this.dailyStats = {}; // Statistiche per giorno
     }
 
     /**
@@ -37,7 +38,37 @@ class CognitiveMetrics {
             ((this.metrics.averageResponseLength * (this.metrics.totalInteractions - 1)) + analysis.length) 
             / this.metrics.totalInteractions;
 
+        // Aggiorna statistiche giornaliere
+        this.updateDailyStats(analysis);
+
         return analysis;
+    }
+
+    /**
+     * Aggiorna statistiche per giorno
+     */
+    updateDailyStats(analysis) {
+        const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+        
+        if (!this.dailyStats[today]) {
+            this.dailyStats[today] = {
+                interactions: 0,
+                questions: 0,
+                reflective: 0,
+                direct: 0,
+            };
+        }
+        
+        this.dailyStats[today].interactions++;
+        if (analysis.containsQuestion) this.dailyStats[today].questions++;
+        if (analysis.isReflective) this.dailyStats[today].reflective++;
+        if (analysis.isDirect) this.dailyStats[today].direct++;
+        
+        // Mantieni solo ultimi 30 giorni
+        const dates = Object.keys(this.dailyStats).sort();
+        if (dates.length > 30) {
+            delete this.dailyStats[dates[0]];
+        }
     }
 
     /**
@@ -123,6 +154,7 @@ class CognitiveMetrics {
             reflectivePrompts: this.metrics.reflectivePrompts,
             averageResponseLength: Math.round(this.metrics.averageResponseLength),
             assessment: this.getAssessment(score),
+            dailyStats: this.dailyStats,
         };
     }
 
@@ -148,6 +180,7 @@ class CognitiveMetrics {
             reflectivePrompts: 0,
             averageResponseLength: 0,
         };
+        this.dailyStats = {};
     }
 }
 

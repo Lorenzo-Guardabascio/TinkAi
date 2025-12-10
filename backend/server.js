@@ -5,11 +5,53 @@ const path = require('path');
 const { OpenAI } = require('openai');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const systemPrompt = require('./systemPrompt');
+const CognitiveMetrics = require('./cognitiveMetrics');
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Rate limiting: max 20 richieste per IP ogni 15 minuti
+const requestCounts = new Map();
+const RATE_LIMIT_WINDOW = 15 * 60 * 1000; // 15 minuti
+const MAX_REQUESTS = 20;
+
+function rateLimitMiddleware(req, res, next) {
+    const ip = req.ip || req.connection.remoteAddress;
+    const now = Date.now();
+    
+    if (!requestCounts.has(ip)) {
+        requestCounts.set(ip, []);
+    }
+    
+    const requests = requestCounts.get(ip);
+    // Rimuovi richieste vecchie
+    const recentRequests = requests.filter(time => now - time < RATE_LIMIT_WINDOW);
+    
+    if (recentRequests.length >= MAX_REQUESTS) {
+        return res.status(429).json({ 
+            error: 'Troppi tentativi. Prenditi un momento per riflettere prima di continuare.' 
+        });
+    }
+    
+    recentRequests.push(now);
+    requestCounts.set(ip, recentRequests);
+    next();
+}
+
+// Pulizia periodica della mappa
+setInterval(() => {
+    const now = Date.now();
+    for (const [ip, requests] of requestCounts.entries()) {
+        const recent = requests.filter(time => now - time < RATE_LIMIT_WINDOW);
+        if (recent.length === 0) {
+            requestCounts.delete(ip);
+        } else {
+            requestCounts.set(ip, recent);
+        }
+    }
+}, RATE_LIMIT_WINDOW);
 
 // Middleware
 app.use(cors());
@@ -30,14 +72,38 @@ if (process.env.GEMINI_API_KEY) {
     genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 }
 
-// Chat Endpoint
-app.post('/api/chat', async (req, res) => {
-    const { message, history } = req.body;
-    const provider = process.env.AI_PROVIDER || 'gemini'; // Default to gemini or openai
+// Cognitive Metrics System
+const cognitiveMetrics = new CognitiveMetrics();
 
+// Chat Endpoint
+app.post('/api/chat', rateLimitMiddleware, async (req, res) => {
+    const { message, history } = req.body;
+    const provider = process.env.AI_PROVIDER || 'gemini';
+
+    // Validazione input
     if (!message) {
         return res.status(400).json({ error: 'Message is required' });
     }
+
+    if (typeof message !== 'string') {
+        return res.status(400).json({ error: 'Message must be a string' });
+    }
+
+    if (message.length > 2000) {
+        return res.status(400).json({ error: 'Message too long (max 2000 characters)' });
+    }
+
+    if (message.trim().length === 0) {
+        return res.status(400).json({ error: 'Message cannot be empty' });
+    }
+
+    // Validazione history
+    if (history && (!Array.isArray(history) || history.length > 50)) {
+        return res.status(400).json({ error: 'Invalid conversation history' });
+    }
+
+    // Sanitizzazione base (rimuove caratteri di controllo potenzialmente pericolosi)
+    const sanitizedMessage = message.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '');
 
     try {
         let reply = '';
@@ -56,7 +122,7 @@ app.post('/api/chat', async (req, res) => {
                     });
                 });
             }
-            messages.push({ role: "user", content: message });
+            messages.push({ role: "user", content: sanitizedMessage });
 
             const completion = await openai.chat.completions.create({
                 messages: messages,
@@ -93,7 +159,7 @@ app.post('/api/chat', async (req, res) => {
             const chat = model.startChat({
                 history: geminiHistory,
             });
-            const result = await chat.sendMessage(message);
+            const result = await chat.sendMessage(sanitizedMessage);
             const response = await result.response;
             reply = response.text();
 
@@ -102,6 +168,9 @@ app.post('/api/chat', async (req, res) => {
             console.log("No API keys configured or provider not found. Using mock response.");
             reply = "Questa è una risposta simulata (MVP). Configura le API Key nel file .env per attivare l'intelligenza reale. \n\nDomanda di riflessione: Cosa ti aspetti che io ti dica ora?";
         }
+
+        // Analizza risposta per metriche cognitive
+        cognitiveMetrics.analyzeResponse(reply);
 
         res.json({ reply });
 
@@ -112,6 +181,18 @@ app.post('/api/chat', async (req, res) => {
         }
         res.status(500).json({ error: 'Internal Server Error processing your thought.' });
     }
+});
+
+// Endpoint per visualizzare le metriche cognitive
+app.get('/api/metrics', (req, res) => {
+    const report = cognitiveMetrics.getReport();
+    res.json(report);
+});
+
+// Endpoint per resettare le metriche (solo per admin/dev)
+app.post('/api/metrics/reset', (req, res) => {
+    cognitiveMetrics.reset();
+    res.json({ message: 'Metrics reset successfully' });
 });
 
 app.listen(PORT, '0.0.0.0', () => {

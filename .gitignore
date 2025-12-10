@@ -15,6 +15,11 @@ yarn-error.log*
 logs/
 *.log
 
+# PM2
+.pm2/
+pids/
+*.pid
+
 # OS files
 .DS_Store
 Thumbs.db
@@ -22,3 +27,9 @@ Thumbs.db
 # Editor directories
 .vscode/
 .idea/
+
+# Build and temp files
+dist/
+build/
+.cache/
+*.tmp

@@ -305,23 +305,44 @@ document.addEventListener('DOMContentLoaded', () => {
         showTypingIndicator();
 
         try {
-            // Determina l'URL dell'API. Se non siamo sulla porta 3000, punta esplicitamente lì.
-            const API_PORT = 3000;
-            let apiUrl = '/api/chat';
-            if (window.location.port !== String(API_PORT)) {
-                apiUrl = `${window.location.protocol}//${window.location.hostname}:${API_PORT}/api/chat`;
-            }
-
-            const response = await fetch(apiUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ 
+            // Usa WordPress AJAX proxy se disponibile, altrimenti backend diretto
+            const isWordPress = typeof tinkaiConfig !== 'undefined';
+            
+            let response;
+            if (isWordPress) {
+                // WordPress AJAX Proxy
+                const formData = new FormData();
+                formData.append('action', 'tinkai_proxy');
+                formData.append('nonce', tinkaiConfig.nonce);
+                formData.append('endpoint', 'chat');
+                formData.append('data', JSON.stringify({ 
                     message: text,
                     history: currentHistory 
-                })
-            });
+                }));
+                
+                response = await fetch(tinkaiConfig.ajaxUrl, {
+                    method: 'POST',
+                    body: formData
+                });
+            } else {
+                // Backend diretto (standalone mode)
+                const API_PORT = 3000;
+                let apiUrl = '/api/chat';
+                if (window.location.port !== String(API_PORT)) {
+                    apiUrl = `${window.location.protocol}//${window.location.hostname}:${API_PORT}/api/chat`;
+                }
+                
+                response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ 
+                        message: text,
+                        history: currentHistory 
+                    })
+                });
+            }
 
             if (!response.ok) {
                 const errorText = await response.text();

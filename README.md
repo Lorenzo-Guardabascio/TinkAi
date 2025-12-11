@@ -1,233 +1,399 @@
-# TinkAi
+# TinkAi - WordPress Plugin
 
 **The intelligence that keeps you thinking**
 
-TinkAi non è un assistente AI tradizionale. È un progetto culturale che dimostra come l'intelligenza artificiale dovrebbe comportarsi per preservare e potenziare l'autonomia cognitiva dell'utente.
+![Version](https://img.shields.io/badge/version-1.3.0-blue)
+![WordPress](https://img.shields.io/badge/WordPress-5.8%2B-blue)
+![PHP](https://img.shields.io/badge/PHP-7.4%2B-purple)
+![Node.js](https://img.shields.io/badge/Node.js-18%2B-green)
+![License](https://img.shields.io/badge/license-MIT-green)
 
-## 🎯 Missione
+Un assistente AI progettato per **stimolare il pensiero critico** invece di sostituirlo. TinkAi è un plugin WordPress che integra un backend Node.js per offrire un'esperienza cognitiva unica.
 
-Proteggere la mente umana dall'atrofia cognitiva causata dall'IA "spoon-feeding". TinkAi fa domande prima di rispondere, stimola la riflessione e guida il percorso mentale senza sostituirsi al pensiero.
+## 📋 Indice
 
----
+- [Caratteristiche](#-caratteristiche)
+- [Requisiti](#-requisiti)
+- [Installazione](#-installazione)
+- [Configurazione](#-configurazione)
+- [Utilizzo](#-utilizzo)
+- [Architettura Tecnica](#-architettura-tecnica)
+- [Troubleshooting](#-troubleshooting)
+- [FAQ](#-faq)
+- [Licenza](#-licenza)
 
-## 🚀 Quick Start (Hestia Control Panel)
+## ✨ Caratteristiche
 
-### Prerequisiti
-- Server con Hestia Control Panel
-- Node.js 18+ installato
-- Accesso SSH
-- API Key di Gemini o OpenAI
+- 🧠 **Pensiero Critico**: Stimola il ragionamento autonomo invece di fornire risposte pronte
+- 🎯 **Sistema Anti-Gaming**: Riconosce tentativi di aggirare il processo educativo
+- 📊 **Metriche Cognitive**: Dashboard dettagliata con TinkAi Score e statistiche giornaliere
+- 👍👎 **Sistema Feedback**: Raccolta feedback utenti con analytics
+- 🌓 **Dark Mode**: Tema chiaro/scuro con persistenza localStorage
+- ⌨️ **Keyboard Shortcuts**: Scorciatoie da tastiera per power users
+- 🔒 **Privacy-First**: Dati salvati solo nel browser (localStorage), GDPR compliant
+- 📱 **Responsive**: Design ottimizzato per mobile (touch targets 44px)
+- ⚡ **Performance**: Compressione gzip, lazy loading, rate limiting
 
-### 1. Setup del Progetto
+## 🔧 Requisiti
 
-```bash
-# Naviga nella cartella public_html del tuo dominio
-cd /home/dev/web/tinkai.local/public_html
+### Software Necessario
 
-# Installa dipendenze backend
-cd backend
-npm install
+- **WordPress**: 5.8 o superiore
+- **PHP**: 7.4 o superiore
+- **Node.js**: 18.0 o superiore
+- **NPM**: 8.0 o superiore
 
-# Copia e configura file ambiente
-cp .env.example .env
-nano .env
-```
+### Hosting Requirements
 
-### 2. Configurazione .env
+- Accesso SSH al server
+- Possibilità di eseguire processi Node.js persistenti (PM2 consigliato)
+- Reverse proxy configurato (Nginx/Apache)
 
-```env
-# Provider AI: "gemini" o "openai"
-AI_PROVIDER=gemini
+### API Keys
 
-# Gemini API Key (consigliato per MVP)
-GEMINI_API_KEY=your_gemini_api_key_here
+Almeno una delle seguenti:
 
-# OpenAI API Key (opzionale)
-OPENAI_API_KEY=your_openai_api_key_here
+- **Google Gemini API** (consigliato per iniziare - gratuita): [Google AI Studio](https://makersuite.google.com/app/apikey)
+- **OpenAI API** (GPT-3.5/GPT-4): [OpenAI Platform](https://platform.openai.com/api-keys)
 
-# Porta del server (default 3000)
-PORT=3000
-```
+## 📦 Installazione
 
-**Ottieni una API Key:**
-- **Gemini**: https://makersuite.google.com/app/apikey
-- **OpenAI**: https://platform.openai.com/api-keys
+### Metodo 1: Installazione Manuale
 
-### 3. Avvio del Server
+1. **Download del plugin**:
+   ```bash
+   cd /path/to/wordpress/wp-content/plugins/
+   # Copia la cartella tinkai-plugin qui
+   ```
 
-#### Opzione A: Manuale (per test)
-```bash
-cd /home/dev/web/tinkai.local/public_html/backend
-node server.js
-```
+2. **Installazione dipendenze Node.js**:
+   ```bash
+   cd tinkai-plugin/backend/
+   npm install
+   ```
 
-#### Opzione B: Con PM2 (consigliato per produzione)
-```bash
-# Installa PM2 globalmente (se non presente)
-npm install -g pm2
+3. **Configurazione variabili ambiente**:
+   ```bash
+   cd tinkai-plugin/backend/
+   cp .env.example .env
+   nano .env
+   ```
+   
+   Aggiungi le tue API keys:
+   ```env
+   AI_PROVIDER=gemini
+   GEMINI_API_KEY=tua_api_key_gemini
+   OPENAI_API_KEY=tua_api_key_openai
+   PORT=3000
+   ```
 
-# Avvia il server
-cd /home/dev/web/tinkai.local/public_html/backend
-pm2 start server.js --name tinkai
+4. **Attivazione plugin in WordPress**:
+   - Vai su `Plugin > Plugin installati`
+   - Trova "TinkAi - Cognitive AI Assistant"
+   - Clicca "Attiva"
 
-# Salva la configurazione per riavvio automatico
-pm2 save
-pm2 startup
-```
+5. **Avvio backend Node.js**:
+   
+   **Opzione A: Esecuzione Manuale** (per test)
+   ```bash
+   cd wp-content/plugins/tinkai-plugin/backend/
+   node server.js
+   ```
+   
+   **Opzione B: PM2 (consigliato per produzione)**
+   ```bash
+   # Installa PM2 globalmente
+   npm install -g pm2
+   
+   # Avvia il backend
+   cd wp-content/plugins/tinkai-plugin/backend/
+   pm2 start ecosystem.config.json
+   
+   # Verifica status
+   pm2 status
+   pm2 logs tinkai-backend
+   
+   # Salva configurazione per avvio automatico
+   pm2 save
+   pm2 startup
+   ```
 
-### 4. Configurazione Nginx (Hestia)
+### Metodo 2: Via ZIP
 
-Crea un proxy reverse per collegare il frontend statico al backend Node.js:
+1. Comprimi la cartella `wordpress-plugin` in `tinkai-plugin.zip`
+2. In WordPress: `Plugin > Aggiungi nuovo > Carica plugin`
+3. Carica il file ZIP
+4. Attiva il plugin
+5. Segui i passi 2-5 del Metodo 1
 
-```bash
-# Modifica la configurazione Nginx del dominio
-sudo nano /etc/nginx/conf.d/tinkai.local.conf
-```
+## ⚙️ Configurazione
 
-Aggiungi dentro il blocco `server`:
+### 1. Configurazione WordPress Admin
+
+Vai su `TinkAi > Impostazioni` e configura:
+
+#### API Configuration
+- **Provider AI**: Scegli tra Gemini o OpenAI
+- **Gemini API Key**: Inserisci la tua API key di Google
+- **OpenAI API Key**: Inserisci la tua API key di OpenAI
+
+#### Node.js Backend Configuration
+- **Host Node.js**: `localhost` (o IP interno se su server diverso)
+- **Porta Node.js**: `3000` (default)
+
+#### Funzionalità
+- ✅ Metriche Cognitive
+- ✅ Sistema Feedback
+- ✅ Dark Mode
+
+### 2. Test Connessione
+
+Nella pagina impostazioni, clicca su **"🔍 Verifica Connessione"** per testare il backend Node.js.
+
+### 3. Reverse Proxy (se necessario)
+
+Se il tuo hosting usa Nginx, aggiungi al file di configurazione:
 
 ```nginx
-location /api/ {
-    proxy_pass http://localhost:3000;
+location /tinkai-api/ {
+    proxy_pass http://localhost:3000/api/;
     proxy_http_version 1.1;
     proxy_set_header Upgrade $http_upgrade;
     proxy_set_header Connection 'upgrade';
     proxy_set_header Host $host;
     proxy_cache_bypass $http_upgrade;
-    proxy_set_header X-Real-IP $remote_addr;
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 }
 ```
 
-Riavvia Nginx:
-```bash
-sudo systemctl restart nginx
+Per Apache (`.htaccess`):
+
+```apache
+<IfModule mod_proxy.c>
+    ProxyPass /tinkai-api/ http://localhost:3000/api/
+    ProxyPassReverse /tinkai-api/ http://localhost:3000/api/
+</IfModule>
 ```
 
-### 5. Test
+## 🎯 Utilizzo
 
-Apri il browser su `http://tinkai.local` (o il tuo dominio) e inizia a chattare!
+### Shortcode Base
 
----
-
-## 📁 Struttura del Progetto
+Inserisci TinkAi in qualsiasi pagina o post:
 
 ```
-public_html/
-├── index.html          # Frontend UI
-├── style.css           # Stili minimal
-├── script.js           # Logica frontend + localStorage
-├── robots.txt          # SEO
-├── .gitignore          # Esclusioni Git
-└── backend/
-    ├── server.js       # Server Express + API
-    ├── systemPrompt.js # Regole cognitive TinkAi
-    ├── .env            # Configurazione (NON committare)
-    ├── .env.example    # Template configurazione
-    └── package.json    # Dipendenze
+[tinkai]
 ```
 
----
+### Opzioni Shortcode
 
-## ⚙️ Funzionalità Implementate
+```
+[tinkai theme="dark"]                    # Tema scuro di default
+[tinkai height="800px"]                  # Altezza personalizzata
+[tinkai width="90%"]                     # Larghezza personalizzata
+[tinkai theme="dark" height="700px"]     # Combinazione opzioni
+```
 
-### Frontend
-- ✅ Chat UI minimal e pulita
-- ✅ Indicatore "typing" durante elaborazione
-- ✅ Gestione errori UX-friendly
-- ✅ Persistenza conversazioni (localStorage, 24h)
-- ✅ Export conversazione in TXT
-- ✅ Accessibilità (ARIA labels, keyboard support)
-- ✅ Responsive design
+### Keyboard Shortcuts
 
-### Backend
-- ✅ API REST `/api/chat`
-- ✅ Rate limiting (20 req/15min per IP)
-- ✅ Validazione e sanitizzazione input
-- ✅ Supporto multi-provider (Gemini/OpenAI)
-- ✅ Gestione storico conversazione
-- ✅ Error handling robusto
+Gli utenti possono usare queste scorciatoie:
 
-### System Prompt
-- ✅ Regole cognitive TinkAi
-- ✅ Prevenzione spoon-feeding
-- ✅ Stimolazione metacognizione
+- `Ctrl/Cmd + K` - Nuova conversazione
+- `Ctrl/Cmd + E` - Esporta conversazione
+- `Ctrl/Cmd + D` - Cambia tema (chiaro/scuro)
+- `Esc` - Focus sull'input
 
----
+### Dashboard Admin
+
+#### Metriche Cognitive (`TinkAi > Metrics`)
+- 🎯 **TinkAi Score**: Indice di qualità cognitiva (0-100)
+- 💭 **Risposte Riflessive**: Quante volte TinkAi ha stimolato riflessione
+- 📝 **Risposte Dirette**: Risposte informative dirette
+- 📅 **Statistiche Giornaliere**: Calendario ultimi 7 giorni
+
+#### Documentazione (`TinkAi > Documentation`)
+- Guida completa all'uso
+- Best practices
+- Risoluzione problemi
+
+## 🏗️ Architettura Tecnica
+
+### Stack Tecnologico
+
+```
+Frontend Layer (WordPress)
+├── PHP 7.4+
+├── WordPress 5.8+
+└── AJAX Proxy
+
+Application Layer (Node.js)
+├── Express.js
+├── Google Gemini AI
+├── OpenAI GPT
+└── Cognitive Metrics Engine
+
+Client Layer
+├── Vanilla JavaScript
+├── HTML5 / CSS3
+└── localStorage (persistenza)
+```
+
+### Flusso Dati
+
+```
+Utente WordPress
+    ↓
+WordPress Frontend (shortcode [tinkai])
+    ↓
+WordPress AJAX Proxy (PHP)
+    ↓
+Node.js Backend Express (port 3000)
+    ↓
+AI Provider (Gemini/OpenAI)
+    ↓
+Cognitive Metrics Analysis
+    ↓
+Response + Metrics
+    ↓
+Utente WordPress
+```
+
+### Perché Node.js Separato?
+
+Il backend Node.js è mantenuto separato per:
+
+1. **Scalabilità**: Permette load balancing indipendente
+2. **Manutenibilità**: Logica AI separata da WordPress
+3. **Flessibilità**: Può essere usato con altre applicazioni
+4. **Futura Migrazione**: Preparato per React/Angular frontend
 
 ## 🔧 Troubleshooting
 
-### Il server non parte
+### ❌ "Backend non connesso"
+
+**Causa**: Il server Node.js non è in esecuzione
+
+**Soluzione**:
 ```bash
-# Verifica che Node.js sia installato
-node --version  # deve essere 18+
-
-# Verifica le dipendenze
-cd backend && npm install
-
-# Controlla i log
-pm2 logs tinkai
+cd wp-content/plugins/tinkai-plugin/backend/
+node server.js
 ```
 
-### Errore 404 Not Found (Gemini)
-Abilita l'API Google Generative Language:
-https://console.cloud.google.com/apis/library/generativelanguage.googleapis.com
+Oppure verifica PM2:
+```bash
+pm2 list
+pm2 logs tinkai-backend
+pm2 restart tinkai-backend
+```
 
-### La chat non si collega al backend
-Verifica che:
-1. Il server Node.js sia avviato (`pm2 status`)
-2. La configurazione Nginx sia corretta
-3. Il firewall permetta la porta 3000 in locale
+### ❌ "Errore API"
 
-### Conversazione non si salva
-Controlla la console del browser (F12) per errori localStorage.
-Alcuni browser in modalità privata disabilitano lo storage.
+**Causa**: API key mancante o errata
+
+**Soluzione**:
+1. Verifica `.env` nel backend:
+   ```bash
+   cat wp-content/plugins/tinkai-plugin/backend/.env
+   ```
+2. Controlla che l'API key sia valida sul provider
+3. Verifica limiti di utilizzo nell'account
+
+### ❌ "Rate limit exceeded"
+
+**Causa**: Troppe richieste (20 in 15 minuti)
+
+**Soluzione**: Attendi qualche minuto. Il rate limiting previene abusi.
+
+### ❌ Chat non si carica
+
+**Possibili cause**:
+- Conflitti con altri plugin JavaScript
+- Theme WordPress incompatibile
+- File CSS/JS non caricati
+
+**Soluzione**:
+1. Apri Console del browser (F12) per vedere errori
+2. Prova a disabilitare temporaneamente altri plugin
+3. Testa con theme WordPress standard (Twenty Twenty-Three)
+4. Verifica che i file in `assets/` siano accessibili
+
+### ❌ "Module not found" (Node.js)
+
+**Causa**: Dipendenze non installate
+
+**Soluzione**:
+```bash
+cd wp-content/plugins/tinkai-plugin/backend/
+npm install
+```
+
+### ❌ Porta 3000 già in uso
+
+**Soluzione 1**: Cambia porta nel `.env`
+```env
+PORT=3001
+```
+
+**Soluzione 2**: Trova processo che occupa porta 3000
+```bash
+lsof -i :3000
+kill -9 <PID>
+```
+
+## ❓ FAQ
+
+### Dove vengono salvati i dati delle conversazioni?
+
+Solo nel browser dell'utente tramite `localStorage`. Nessun dato viene salvato sui server WordPress o Node.js.
+
+### È compatibile con Multisite WordPress?
+
+Sì, ma il backend Node.js deve essere condiviso tra i siti o configurato per istanza separata.
+
+### Posso usare TinkAi senza Node.js?
+
+No. TinkAi richiede il backend Node.js per comunicare con i provider AI. L'architettura è progettata per scalabilità e futura migrazione a SPA.
+
+### Quanto costa l'API di Google Gemini?
+
+Google Gemini offre un tier gratuito generoso. Consulta: [Gemini Pricing](https://ai.google.dev/pricing)
+
+### Posso personalizzare il sistema prompt?
+
+Sì! Modifica il file `backend/systemPrompt.js` per personalizzare il comportamento di TinkAi.
+
+### Come disinstallo completamente il plugin?
+
+1. Disattiva il plugin in WordPress
+2. Ferma il backend Node.js: `pm2 delete tinkai-backend`
+3. Elimina la cartella: `rm -rf wp-content/plugins/tinkai-plugin/`
+
+### È GDPR compliant?
+
+Sì. TinkAi:
+- Non traccia identificatori personali
+- Salva dati solo nel browser dell'utente
+- Mostra banner informativo sulla privacy
+- I messaggi inviati ai provider AI seguono le loro policy
+
+## 📄 Licenza
+
+MIT License - Copyright (c) 2024 Lorenzo Guardabascio
+
+## 🤝 Supporto
+
+- 📧 **Email**: support@tinkai.local
+- 📖 **Documentazione**: Disponibile in `TinkAi > Documentation` nell'admin WordPress
+- 🐛 **Bug Report**: Controlla prima la sezione Troubleshooting
+
+## 🚀 Roadmap
+
+- [ ] Supporto multilingua (i18n)
+- [ ] Dashboard analytics avanzato
+- [ ] Export conversazioni in PDF
+- [ ] Integrazione con LMS (Moodle, LearnDash)
+- [ ] Mobile app (React Native)
+- [ ] API pubbliche per integrazioni terze parti
 
 ---
 
-## 🔐 Sicurezza e Privacy
-
-- **Rate Limiting**: Previene abusi (20 richieste/15min)
-- **Input Validation**: Sanitizzazione messaggi
-- **API Keys**: Mai esposte al frontend
-- **localStorage**: Dati salvati solo localmente (non inviati a server esterni)
-- **HTTPS**: Consigliato per produzione (usa Hestia Let's Encrypt)
-
----
-
-## 🚧 Roadmap Futura
-
-- [ ] Dashboard metriche cognitive
-- [ ] Multi-lingua (EN, IT, ES)
-- [ ] Profili utente (studente, professionista, etc.)
-- [ ] Analytics: domande vs risposte dirette
-- [ ] Integrazione con altri LLM (Claude, Llama)
-- [ ] Modalità "insegnante" con report
-
----
-
-## 📄 Licenza e Filosofia
-
-TinkAi è un **manifesto culturale**. Non è solo codice, è una visione su come l'IA dovrebbe comportarsi.
-
-**Principi fondamentali:**
-1. L'IA deve fare domande prima di rispondere
-2. Deve stimolare il pensiero critico, non sostituirlo
-3. Deve insegnare a ragionare, non a chiedere
-4. Deve proteggere la metacognizione
-
----
-
-## 🤝 Contributi
-
-Questo progetto è nato come MVP educativo. Contributi che rispettano il manifesto sono benvenuti.
-
-**Repository**: https://github.com/Lorenzo-Guardabascio/TinkAi
-
----
-
-## 📧 Supporto
-
-Per domande tecniche o filosofiche sul progetto, apri una issue su GitHub.
-
-**TinkAi** - L'intelligenza che tiene accesa la tua. 🧠
+**Sviluppato con ❤️ per stimolare il pensiero critico nell'era dell'AI**

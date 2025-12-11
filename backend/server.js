@@ -185,6 +185,16 @@ app.post('/api/chat', rateLimitMiddleware, async (req, res) => {
     }
 });
 
+// Health check endpoint (per WordPress plugin)
+app.get('/api/health', (req, res) => {
+    res.json({ 
+        status: 'ok', 
+        version: '1.3.0',
+        uptime: process.uptime(),
+        timestamp: new Date().toISOString()
+    });
+});
+
 // Endpoint per visualizzare le metriche cognitive
 app.get('/api/metrics', (req, res) => {
     const report = cognitiveMetrics.getReport();

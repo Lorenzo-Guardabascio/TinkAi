@@ -79,7 +79,7 @@ const cognitiveMetrics = new CognitiveMetrics();
 
 // Chat Endpoint
 app.post('/api/chat', rateLimitMiddleware, async (req, res) => {
-    const { message, history } = req.body;
+    const { message, history, systemPromptOverride } = req.body;
     const provider = process.env.AI_PROVIDER || 'gemini';
 
     // Validazione input
@@ -106,13 +106,16 @@ app.post('/api/chat', rateLimitMiddleware, async (req, res) => {
 
     // Sanitizzazione base (rimuove caratteri di controllo potenzialmente pericolosi)
     const sanitizedMessage = message.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '');
+    
+    // Usa systemPromptOverride se fornito (per A/B testing), altrimenti usa quello di default
+    const activePrompt = systemPromptOverride || systemPrompt;
 
     try {
         let reply = '';
 
         if (provider === 'openai' && openai) {
             const messages = [
-                { role: "system", content: systemPrompt }
+                { role: "system", content: activePrompt }
             ];
 
             // Aggiungi history per OpenAI
@@ -136,11 +139,11 @@ app.post('/api/chat', rateLimitMiddleware, async (req, res) => {
             // Using user-specified model gemini-2.5-flash
             const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
             
-            // Costruisci la history per Gemini
+            // Costruisci la history per Gemini con il prompt attivo (può essere variant)
             const geminiHistory = [
                 {
                     role: "user",
-                    parts: [{ text: systemPrompt }],
+                    parts: [{ text: activePrompt }],
                 },
                 {
                     role: "model",

@@ -205,11 +205,14 @@ class TinkAi_Plugin {
      * Enqueue frontend assets
      */
     public function enqueue_frontend_assets() {
-        // Only enqueue if shortcode is present
-        if (!is_singular() || !has_shortcode(get_post()->post_content, 'tinkai')) {
-            return;
-        }
-        
+        // Load on all pages - WordPress will only output if actually used
+        $this->load_tinkai_assets();
+    }
+    
+    /**
+     * Load TinkAi assets (CSS/JS)
+     */
+    public function load_tinkai_assets() {
         // Enqueue existing TinkAi assets
         wp_enqueue_style('tinkai-style', TINKAI_PLUGIN_URL . 'assets/style.css', array(), TINKAI_VERSION);
         wp_enqueue_script('tinkai-script', TINKAI_PLUGIN_URL . 'assets/script.js', array(), TINKAI_VERSION, true);
@@ -233,6 +236,8 @@ class TinkAi_Plugin {
      * Render shortcode
      */
     public function render_shortcode($atts) {
+        // NO need to force load here - wp_enqueue_scripts already ran
+        
         $atts = shortcode_atts(array(
             'theme' => 'light',
             'width' => '100%',

@@ -497,6 +497,45 @@ document.addEventListener('DOMContentLoaded', () => {
     // Track interaction
     trackInteraction();
     
+    // Auto-save conversation every 30 seconds
+    setInterval(() => {
+        if (messageCount > 0 && window.tinkaiConfig) {
+            const sessionDuration = Math.floor((Date.now() - sessionStartTime) / 1000);
+            const variantName = currentVariant ? currentVariant.name : 'default';
+            
+            const formData = new FormData();
+            formData.append('action', 'tinkai_save_conversation');
+            formData.append('nonce', window.tinkaiConfig.nonce);
+            formData.append('session_id', sessionId);
+            formData.append('message_count', messageCount);
+            formData.append('duration_seconds', sessionDuration);
+            formData.append('system_prompt_variant', variantName);
+            
+            fetch(window.tinkaiConfig.ajaxUrl, {
+                method: 'POST',
+                body: formData
+            }).catch(err => console.warn('Auto-save failed:', err));
+        }
+    }, 30000);
+    
+    // Save on page unload
+    window.addEventListener('beforeunload', () => {
+        if (messageCount > 0 && window.tinkaiConfig) {
+            const sessionDuration = Math.floor((Date.now() - sessionStartTime) / 1000);
+            const variantName = currentVariant ? currentVariant.name : 'default';
+            
+            const formData = new FormData();
+            formData.append('action', 'tinkai_save_conversation');
+            formData.append('nonce', window.tinkaiConfig.nonce);
+            formData.append('session_id', sessionId);
+            formData.append('message_count', messageCount);
+            formData.append('duration_seconds', sessionDuration);
+            formData.append('system_prompt_variant', variantName);
+            
+            navigator.sendBeacon(window.tinkaiConfig.ajaxUrl, formData);
+        }
+    });
+    
     // Initialize feedback modal
     initializeFeedbackModal();
     

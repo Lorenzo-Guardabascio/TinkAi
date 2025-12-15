@@ -29,7 +29,7 @@ $conv_lengths = $wpdb->get_results("
 // Response time by hour
 $response_times = $wpdb->get_results("
     SELECT 
-        HOUR(created_at) as hour,
+        HOUR(started_at) as hour,
         AVG(avg_response_time) as avg_time
     FROM $conversations_table
     WHERE avg_response_time IS NOT NULL
@@ -65,6 +65,23 @@ $topics = $wpdb->get_results("
     GROUP BY word
     ORDER BY frequency DESC
     LIMIT 20
+", ARRAY_A);
+
+// Variant performance comparison
+$variants_table = $wpdb->prefix . 'tinkai_prompt_variants';
+$variant_performance = $wpdb->get_results("
+    SELECT 
+        v.variant_name,
+        v.total_uses,
+        COUNT(f.id) as feedback_count,
+        AVG(f.rating) as avg_rating,
+        SUM(CASE WHEN f.rating >= 4 THEN 1 ELSE 0 END) as positive_feedback,
+        SUM(CASE WHEN f.rating <= 2 THEN 1 ELSE 0 END) as negative_feedback
+    FROM $variants_table v
+    LEFT JOIN $feedback_table f ON v.variant_name = f.variant_name
+    WHERE v.is_active = 1
+    GROUP BY v.id, v.variant_name
+    ORDER BY avg_rating DESC
 ", ARRAY_A);
 
 // Overall stats
@@ -215,6 +232,72 @@ $avg_messages_per_conv = $wpdb->get_var("SELECT AVG(message_count) FROM $convers
             <?php endif; ?>
         </div>
     </div>
+    
+    <!-- A/B Test Variant Performance -->
+    <div class="analytics-section">
+        <h2>🧪 A/B Test Variant Performance</h2>
+        <table class="wp-list-table widefat fixed striped">
+            <thead>
+                <tr>
+                    <th>Variant</th>
+                    <th>Total Uses</th>
+                    <th>Feedback Count</th>
+                    <th>Conversion Rate</th>
+                    <th>Avg Rating</th>
+                    <th>Positive</th>
+                    <th>Negative</th>
+                    <th>Performance</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if (!empty($variant_performance)): ?>
+                    <?php foreach ($variant_performance as $vp): 
+                        $conv_rate = $vp['total_uses'] > 0 ? round(($vp['feedback_count'] / $vp['total_uses']) * 100, 1) : 0;
+                        $avg_rating = $vp['avg_rating'] ? round($vp['avg_rating'], 2) : 0;
+                        $pos_rate = $vp['feedback_count'] > 0 ? round(($vp['positive_feedback'] / $vp['feedback_count']) * 100, 1) : 0;
+                        $neg_rate = $vp['feedback_count'] > 0 ? round(($vp['negative_feedback'] / $vp['feedback_count']) * 100, 1) : 0;
+                        
+                        // Performance score: avg_rating * conversion_rate
+                        $performance = $avg_rating * ($conv_rate / 100);
+                    ?>
+                        <tr>
+                            <td><strong><?php echo esc_html($vp['variant_name']); ?></strong></td>
+                            <td><?php echo number_format($vp['total_uses']); ?></td>
+                            <td><?php echo number_format($vp['feedback_count']); ?></td>
+                            <td>
+                                <strong><?php echo $conv_rate; ?>%</strong>
+                                <div class="conversion-bar">
+                                    <div class="conversion-fill" style="width: <?php echo min(100, $conv_rate * 2); ?>%"></div>
+                                </div>
+                            </td>
+                            <td>
+                                <strong><?php echo $avg_rating; ?></strong>
+                                <span class="stars-mini"><?php echo str_repeat('⭐', round($avg_rating)); ?></span>
+                            </td>
+                            <td>
+                                <span class="badge-positive"><?php echo $pos_rate; ?>%</span>
+                            </td>
+                            <td>
+                                <span class="badge-negative"><?php echo $neg_rate; ?>%</span>
+                            </td>
+                            <td>
+                                <div class="performance-score" style="background: linear-gradient(90deg, #28a745 0%, #dc3545 100%); background-position: <?php echo (5 - $performance) * 20; ?>% 0;">
+                                    <?php echo round($performance, 2); ?>
+                                </div>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <tr>
+                        <td colspan="8" style="text-align: center;">No A/B test data available yet</td>
+                    </tr>
+                <?php endif; ?>
+            </tbody>
+        </table>
+        <p class="description">
+            <strong>Performance Score</strong> = Avg Rating × Conversion Rate. Higher is better.
+        </p>
+    </div>
 </div>
 
 <style>
@@ -349,4 +432,51 @@ $avg_messages_per_conv = $wpdb->get_var("SELECT AVG(message_count) FROM $convers
     color: #646970;
     font-size: 14px;
 }
+
+.conversion-bar {
+    width: 100%;
+    height: 6px;
+    background: #e0e0e0;
+    border-radius: 3px;
+    margin-top: 4px;
+    overflow: hidden;
+}
+
+.conversion-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #2271b1, #135e96);
+}
+
+.stars-mini {
+    font-size: 12px;
+    margin-left: 4px;
+}
+
+.badge-positive {
+    background: #d4edda;
+    color: #155724;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.badge-negative {
+    background: #f8d7da;
+    color: #721c24;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.performance-score {
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-weight: bold;
+    color: white;
+    text-align: center;
+    display: inline-block;
+}
 </style>
+

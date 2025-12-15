@@ -147,12 +147,14 @@ class CognitiveMetrics {
     getReport() {
         const score = this.getTinkAiScore();
         return {
-            score,
-            totalInteractions: this.metrics.totalInteractions,
-            questionsAsked: this.metrics.questionsAsked,
-            directAnswers: this.metrics.directAnswers,
-            reflectivePrompts: this.metrics.reflectivePrompts,
-            averageResponseLength: Math.round(this.metrics.averageResponseLength),
+            metrics: {
+                tinkaiScore: score,
+                total: this.metrics.totalInteractions,
+                reflective: this.metrics.reflectivePrompts,
+                direct: this.metrics.directAnswers,
+                questions: this.metrics.questionsAsked,
+                averageLength: Math.round(this.metrics.averageResponseLength)
+            },
             assessment: this.getAssessment(score),
             dailyStats: this.dailyStats,
         };

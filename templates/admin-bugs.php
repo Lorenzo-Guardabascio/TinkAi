@@ -84,6 +84,7 @@ $resolved_bugs = $wpdb->get_var("SELECT COUNT(*) FROM $table WHERE status = 'res
         <?php if (empty($bugs)): ?>
             <div class="no-bugs">
                 <p>✨ No bug reports found!</p>
+                <p class="description">Gli utenti possono segnalare bug dalla chat usando l'icona 🐛 nel menu.</p>
             </div>
         <?php else: ?>
             <?php foreach ($bugs as $bug): ?>

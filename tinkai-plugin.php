@@ -880,7 +880,7 @@ class TinkAi_Plugin {
                     'topics' => $topics,
                     'system_prompt_variant' => $variant,
                     'avg_response_time' => $avg_response_time,
-                    'created_at' => current_time('mysql')
+                    'started_at' => current_time('mysql')
                 )
             );
         }

@@ -40,8 +40,18 @@ if (isset($_POST['action']) && current_user_can('manage_options')) {
     }
 }
 
-// Get variants
-$variants = $wpdb->get_results("SELECT * FROM $table ORDER BY total_uses DESC", ARRAY_A);
+// Get variants with real avg_rating from feedback
+$feedback_table = $wpdb->prefix . 'tinkai_feedback';
+$variants = $wpdb->get_results("
+    SELECT 
+        v.*,
+        COALESCE(AVG(f.rating), 0) as real_avg_rating,
+        COUNT(f.id) as feedback_count
+    FROM $table v
+    LEFT JOIN $feedback_table f ON v.variant_name = f.variant_name
+    GROUP BY v.id
+    ORDER BY v.total_uses DESC
+", ARRAY_A);
 
 // Calculate stats
 $total_tests = array_sum(array_column($variants, 'total_uses'));
@@ -54,9 +64,15 @@ $active_variants = count(array_filter($variants, fn($v) => $v['is_active']));
     <!-- Info Box -->
     <div class="notice notice-info">
         <p>
-            <strong>How it works:</strong> Create multiple prompt variants to test which performs better. 
-            Each variant has a weight (higher = more likely to be shown). 
-            The system tracks usage and ratings for each variant.
+            <strong>🎲 Come funziona lo smistamento A/B Test:</strong><br>
+            I variant vengono selezionati in modo <strong>casuale pesato (weighted random)</strong> basato sul campo "Weight".<br>
+            • Variant con weight = 80 sarà mostrato 80% delle volte<br>
+            • Variant con weight = 20 sarà mostrato 20% delle volte<br>
+            • Solo i variant <strong>attivi</strong> partecipano alla selezione<br>
+            • Il sistema traccia utilizzi e rating reali dai feedback degli utenti
+        </p>
+        <p>
+            <strong>💡 Best Practice:</strong> Inizia con pesi uguali (50/50), poi aumenta il peso del variant con performance migliore.
         </p>
     </div>
     
@@ -126,8 +142,10 @@ $active_variants = count(array_filter($variants, fn($v) => $v['is_active']));
         <div class="variants-grid">
             <?php foreach ($variants as $variant): ?>
                 <?php
-                $avg_rating = $variant['avg_rating'] ? round($variant['avg_rating'], 1) : 0;
+                $avg_rating = $variant['real_avg_rating'] ? round($variant['real_avg_rating'], 1) : 0;
                 $usage_percent = $total_tests > 0 ? round(($variant['total_uses'] / $total_tests) * 100, 1) : 0;
+                $feedback_count = intval($variant['feedback_count']);
+                $conversion_rate = $variant['total_uses'] > 0 ? round(($feedback_count / $variant['total_uses']) * 100, 1) : 0;
                 ?>
                 
                 <div class="variant-card <?php echo $variant['is_active'] ? 'active' : 'inactive'; ?>">
@@ -150,6 +168,11 @@ $active_variants = count(array_filter($variants, fn($v) => $v['is_active']));
                             <span class="stars"><?php echo str_repeat('⭐', round($avg_rating)); ?></span>
                         </div>
                         <div class="mini-stat">
+                            <span class="label">Feedback:</span>
+                            <strong><?php echo number_format($feedback_count); ?></strong>
+                            <span class="percent">(<?php echo $conversion_rate; ?>% conv.)</span>
+                        </div>
+                        <div class="mini-stat">
                             <span class="label">Weight:</span>
                             <strong><?php echo $variant['weight']; ?></strong>
                         </div>
@@ -161,7 +184,7 @@ $active_variants = count(array_filter($variants, fn($v) => $v['is_active']));
                     </details>
                     
                     <div class="variant-actions">
-                        <button class="button edit-variant-btn" data-variant='<?php echo json_encode($variant); ?>'>
+                        <button class="button edit-variant-btn" data-variant='<?php echo esc_attr(json_encode($variant)); ?>'>
                             ✏️ Edit
                         </button>
                         <form method="post" style="display: inline;" onsubmit="return confirm('Delete this variant?');">

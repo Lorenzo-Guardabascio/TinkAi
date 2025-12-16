@@ -325,6 +325,12 @@ document.addEventListener('DOMContentLoaded', () => {
     async function handleSendMessage() {
         const text = userInput.value.trim();
         if (!text || isProcessing) return;
+        
+        // Controlla se la quota è stata superata
+        if (quotaStatus.quota_exceeded || !quotaStatus.can_interact) {
+            showToast('⛔ Quota raggiunta - Non puoi inviare messaggi', 3000);
+            return;
+        }
 
         // Validazione input base
         if (text.length > 2000) {
@@ -433,9 +439,12 @@ document.addEventListener('DOMContentLoaded', () => {
             addMessage(errorMessage, false, true);
         } finally {
             isProcessing = false;
-            sendBtn.disabled = false;
-            userInput.disabled = false;
-            userInput.focus();
+            // Non riabilitare l'input se la quota è stata raggiunta
+            if (!quotaStatus.quota_exceeded && quotaStatus.can_interact) {
+                sendBtn.disabled = false;
+                userInput.disabled = false;
+                userInput.focus();
+            }
         }
     }
 
@@ -496,9 +505,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Check user quota on load
     checkUserQuota();
     
-    // Track interaction
-    trackInteraction();
-    
     // Auto-save conversation every 30 seconds
     setInterval(() => {
         if (messageCount > 0 && window.tinkaiConfig) {
@@ -544,6 +550,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize bug reporter
     initializeBugReporter();
     
+    // Variabile globale per lo stato della quota
+    let quotaStatus = {
+        can_interact: true,
+        quota_exceeded: false
+    };
+    
     async function checkUserQuota() {
         if (!window.tinkaiConfig) return; // Solo in modalità WordPress
         
@@ -560,10 +572,17 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
             
             if (data.success) {
+                quotaStatus = {
+                    can_interact: data.data.can_interact,
+                    quota_exceeded: data.data.quota_exceeded || false,
+                    quota_message: data.data.quota_message || ''
+                };
+                
                 updateQuotaDisplay(data.data);
                 
                 if (data.data.quota_exceeded) {
                     showQuotaWarning(data.data);
+                    disableChatInput();
                 }
             }
         } catch (error) {
@@ -601,14 +620,64 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     function showQuotaWarning(quotaData) {
+        // Rimuovi eventuali warning precedenti
+        const existingWarning = document.getElementById('quota-exceeded-warning');
+        if (existingWarning) {
+            existingWarning.remove();
+        }
+        
         const warning = document.createElement('div');
+        warning.id = 'quota-exceeded-warning';
         warning.className = 'quota-exceeded-warning';
         warning.innerHTML = `
-            <h3>⚠️ Quota Raggiunta</h3>
-            <p>${quotaData.message}</p>
-            <button onclick="this.parentElement.remove()">OK</button>
+            <div class="quota-exceeded-content">
+                <div class="quota-icon">⛔</div>
+                <div class="quota-text">
+                    <strong>Limite raggiunto</strong>
+                    <span>${quotaData.quota_message || 'Riprova più tardi'}</span>
+                </div>
+            </div>
         `;
+        
+        // Inserisci il warning nel body
         document.body.appendChild(warning);
+        
+        // Mostra con animazione
+        setTimeout(() => warning.classList.add('show'), 100);
+    }
+    
+    function disableChatInput() {
+        const input = document.getElementById('user-input');
+        const sendButton = document.getElementById('send-btn');
+        
+        if (input) {
+            input.disabled = true;
+            input.placeholder = '⛔ Quota raggiunta - Chat non disponibile';
+            input.style.cursor = 'not-allowed';
+        }
+        
+        if (sendButton) {
+            sendButton.disabled = true;
+            sendButton.style.cursor = 'not-allowed';
+            sendButton.style.opacity = '0.5';
+        }
+    }
+    
+    function enableChatInput() {
+        const input = document.getElementById('user-input');
+        const sendButton = document.getElementById('send-btn');
+        
+        if (input) {
+            input.disabled = false;
+            input.placeholder = 'Scrivi qui il tuo pensiero...';
+            input.style.cursor = 'text';
+        }
+        
+        if (sendButton) {
+            sendButton.disabled = false;
+            sendButton.style.cursor = 'pointer';
+            sendButton.style.opacity = '1';
+        }
     }
     
     async function trackInteraction() {
@@ -623,6 +692,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 method: 'POST',
                 body: formData
             });
+            
+            // Ricontrolla la quota dopo ogni interazione
+            await checkUserQuota();
         } catch (error) {
             console.warn('Could not track interaction:', error);
         }

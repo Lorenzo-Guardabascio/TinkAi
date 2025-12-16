@@ -15,8 +15,6 @@ $width = $atts['width'] ?? '100%';
 <div class="tinkai-wrapper" style="width: <?php echo esc_attr($width); ?>; max-width: 800px; margin: 0 auto;" data-theme="<?php echo esc_attr($theme); ?>">
     <div class="container">
         <header>
-            <div class="logo">TinkAi</div>
-            <div class="payoff">The intelligence that keeps you thinking</div>
             <div class="header-actions">  
                 
                 <button onclick="exportTinkAiChat()" class="icon-btn" title="Esporta conversazione" aria-label="Esporta conversazione">

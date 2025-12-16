@@ -770,9 +770,39 @@ class TinkAi_Plugin {
             "SELECT * FROM $table WHERE user_id = %d", $user_id
         ), ARRAY_A);
         
-        $can_interact = ($user_data['status'] === 'active') &&
-                       ($user_data['daily_used'] < $user_data['daily_quota']) &&
-                       ($user_data['weekly_used'] < $user_data['weekly_quota']);
+        $daily_exceeded = $user_data['daily_used'] >= $user_data['daily_quota'];
+        $weekly_exceeded = $user_data['weekly_used'] >= $user_data['weekly_quota'];
+        $can_interact = ($user_data['status'] === 'active') && !$daily_exceeded && !$weekly_exceeded;
+        
+        // Calcola tempo rimanente per il reset
+        $last_interaction = $user_data['last_interaction'] ? strtotime($user_data['last_interaction']) : time();
+        $now = time();
+        
+        // Reset giornaliero: 24 ore dall'ultima interazione
+        $daily_reset_time = $last_interaction + 86400;
+        $hours_until_daily_reset = max(0, ceil(($daily_reset_time - $now) / 3600));
+        
+        // Reset settimanale: 7 giorni dall'ultima interazione
+        $weekly_reset_time = $last_interaction + 604800;
+        $days_until_weekly_reset = max(0, ceil(($weekly_reset_time - $now) / 86400));
+        
+        // Crea messaggio appropriato
+        $quota_message = '';
+        if ($daily_exceeded) {
+            $quota_message = sprintf(
+                '⏰ Hai raggiunto il limite giornaliero di %d utilizzi. La quota si resetterà tra %d %s. In caso di necessità, contatta gli amministratori.',
+                $user_data['daily_quota'],
+                $hours_until_daily_reset,
+                $hours_until_daily_reset == 1 ? 'ora' : 'ore'
+            );
+        } elseif ($weekly_exceeded) {
+            $quota_message = sprintf(
+                '📅 Hai raggiunto il limite settimanale di %d utilizzi. La quota si resetterà tra %d %s. In caso di necessità, contatta gli amministratori.',
+                $user_data['weekly_quota'],
+                $days_until_weekly_reset,
+                $days_until_weekly_reset == 1 ? 'giorno' : 'giorni'
+            );
+        }
         
         wp_send_json_success(array(
             'daily_quota' => (int)$user_data['daily_quota'],
@@ -780,7 +810,11 @@ class TinkAi_Plugin {
             'weekly_quota' => (int)$user_data['weekly_quota'],
             'weekly_used' => (int)$user_data['weekly_used'],
             'can_interact' => $can_interact,
-            'status' => $user_data['status']
+            'status' => $user_data['status'],
+            'quota_exceeded' => $daily_exceeded || $weekly_exceeded,
+            'quota_message' => $quota_message,
+            'hours_until_daily_reset' => $hours_until_daily_reset,
+            'days_until_weekly_reset' => $days_until_weekly_reset
         ));
     }
     

@@ -545,39 +545,111 @@
     font-weight: 600;
 }
 
-.tinkai-wrapper .quota-exceeded-warning {
+/* Quota Exceeded Warning - Toast Fluttuante Minimal */
+.quota-exceeded-warning {
     position: fixed;
-    top: 50%;
+    bottom: 24px;
     left: 50%;
-    transform: translate(-50%, -50%);
-    background: var(--bg-color);
-    border: 2px solid var(--error-color);
-    border-radius: 12px;
-    padding: 30px;
-    max-width: 400px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    transform: translateX(-50%) translateY(100px);
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(220, 53, 69, 0.2);
+    border-left: 4px solid #dc3545;
+    border-radius: 8px;
+    padding: 16px 24px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
     z-index: 10000;
+    max-width: 500px;
+    min-width: 320px;
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.tinkai-wrapper .quota-exceeded-warning h3 {
-    margin: 0 0 15px 0;
-    color: var(--error-color);
+.quota-exceeded-warning.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
 }
 
-.tinkai-wrapper .quota-exceeded-warning p {
-    margin: 0 0 20px 0;
-    line-height: 1.6;
+.quota-exceeded-content {
+    display: flex;
+    align-items: center;
+    gap: 14px;
 }
 
-.tinkai-wrapper .quota-exceeded-warning button {
-    background: var(--accent-color);
-    color: var(--bg-color);
-    border: none;
-    padding: 10px 24px;
-    border-radius: 6px;
-    cursor: pointer;
+.quota-exceeded-warning .quota-icon {
+    font-size: 24px;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.quota-exceeded-warning .quota-text {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+}
+
+.quota-exceeded-warning .quota-text strong {
+    font-size: 0.95rem;
     font-weight: 600;
+    color: #212529;
+    line-height: 1.3;
 }
+
+.quota-exceeded-warning .quota-text span {
+    font-size: 0.85rem;
+    color: #6c757d;
+    line-height: 1.4;
+}
+
+/* Dark theme */
+.tinkai-wrapper[data-theme="dark"] ~ .quota-exceeded-warning,
+body.dark-mode .quota-exceeded-warning {
+    background: rgba(33, 37, 41, 0.98);
+    border-color: rgba(220, 53, 69, 0.3);
+    border-left-color: #dc3545;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+}
+
+.tinkai-wrapper[data-theme="dark"] ~ .quota-exceeded-warning .quota-text strong,
+body.dark-mode .quota-exceeded-warning .quota-text strong {
+    color: #f8f9fa;
+}
+
+.tinkai-wrapper[data-theme="dark"] ~ .quota-exceeded-warning .quota-text span,
+body.dark-mode .quota-exceeded-warning .quota-text span {
+    color: #adb5bd;
+}
+
+/* Mobile responsive */
+@media (max-width: 640px) {
+    .quota-exceeded-warning {
+        bottom: 16px;
+        left: 16px;
+        right: 16px;
+        transform: translateX(0) translateY(100px);
+        min-width: auto;
+        max-width: none;
+    }
+    
+    .quota-exceeded-warning.show {
+        transform: translateX(0) translateY(0);
+    }
+}
+
+/* Input disabilitato quando quota raggiunta */
+.tinkai-wrapper input[disabled]#user-input {
+    background: #f0f0f0;
+    color: #999;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.tinkai-wrapper[data-theme="dark"] input[disabled]#user-input {
+    background: #2a2a2a;
+    color: #666;
+}
+
 
 /* Feedback Modal */
 .tinkai-wrapper .feedback-modal {

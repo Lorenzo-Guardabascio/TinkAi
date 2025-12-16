@@ -2,6 +2,61 @@
 
 Tutte le modifiche rilevanti a questo progetto saranno documentate in questo file.
 
+## [1.3.1] - 2024-12-16
+
+### 🆕 Aggiunto
+- **Sistema di Blocco Quota Avanzato**:
+  - Blocco automatico della chat al raggiungimento della quota
+  - Messaggi informativi personalizzati con calcolo tempo di reset
+  - Disabilitazione completa dell'input (testo e pulsante invio)
+  - Banner informativo permanente nella chat con:
+    - Emoji e design accattivante
+    - Informazioni sul tempo rimanente al reset
+    - Indicazioni per contattare amministratori
+    - Supporto tema chiaro/scuro
+  
+- **Calcolo Tempo di Reset**:
+  - Reset giornaliero: 24 ore dall'ultima interazione
+  - Reset settimanale: 7 giorni dall'ultima interazione
+  - Visualizzazione dinamica ore/giorni rimanenti
+  
+- **Controlli Multi-Livello**:
+  - Controllo quota al caricamento pagina
+  - Controllo pre-invio messaggio
+  - Controllo post-risposta con rivalidazione
+  - Protezione nel blocco finally per evitare riabilitazione accidentale
+  
+- **Tool di Testing**:
+  - File `test-quota-system.php` per amministratori
+  - Interfaccia grafica per simulare scenari
+  - Visualizzazione real-time stato quota
+  - Comandi SQL pre-compilati
+  
+- **Documentazione**:
+  - File `QUOTA_BLOCKING_SYSTEM.md` con documentazione completa
+  - FAQ aggiornate nel README
+  - Esempi di testing e troubleshooting
+
+### 🔄 Modificato
+- **ajax_check_quota()**: Aggiunto calcolo tempo reset e messaggi personalizzati
+- **checkUserQuota()**: Memorizzazione stato in variabile globale quotaStatus
+- **trackInteraction()**: Richiama automaticamente checkUserQuota() dopo incremento
+- **handleSendMessage()**: Controllo quota prima di permettere invio
+- **showQuotaWarning()**: Banner inline invece di modal overlay
+
+### 🎨 Styling
+- Nuovi stili CSS per `.quota-exceeded-warning` con:
+  - Gradiente giallo/arancio per visibilità
+  - Animazione slide-down
+  - Responsive e mobile-friendly
+  - Supporto tema scuro completo
+- Stili per input disabilitato con cursore not-allowed
+
+### 🔧 Ottimizzazioni
+- Rimossa chiamata iniziale a `trackInteraction()` per non incrementare quota all'apertura
+- Controllo quota integrato in finally block per coerenza stato
+- Gestione errori migliorata con fallback graceful
+
 ## [1.3.0] - 2024-01-XX
 
 ### 🆕 Aggiunto

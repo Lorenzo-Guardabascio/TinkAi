@@ -28,9 +28,10 @@ Un assistente AI progettato per **stimolare il pensiero critico** invece di sost
 - 🎯 **Sistema Anti-Gaming**: Riconosce tentativi di aggirare il processo educativo
 - 📊 **Metriche Cognitive**: Dashboard dettagliata con TinkAi Score e statistiche giornaliere
 - 👍👎 **Sistema Feedback**: Raccolta feedback utenti con analytics
+- 🔒 **Gestione Quote**: Sistema intelligente di limitazione utilizzi con blocco automatico e messaggi informativi
 - 🌓 **Dark Mode**: Tema chiaro/scuro con persistenza localStorage
 - ⌨️ **Keyboard Shortcuts**: Scorciatoie da tastiera per power users
-- 🔒 **Privacy-First**: Dati salvati solo nel browser (localStorage), GDPR compliant
+- 🔐 **Privacy-First**: Dati salvati solo nel browser (localStorage), GDPR compliant
 - 📱 **Responsive**: Design ottimizzato per mobile (touch targets 44px)
 - ⚡ **Performance**: Compressione gzip, lazy loading, rate limiting
 
@@ -210,6 +211,25 @@ Gli utenti possono usare queste scorciatoie:
 - 📝 **Risposte Dirette**: Risposte informative dirette
 - 📅 **Statistiche Giornaliere**: Calendario ultimi 7 giorni
 
+#### Gestione Utenti e Quote (`TinkAi > Users`)
+- 👥 **Lista Utenti**: Tutti gli utenti che hanno usato TinkAi
+- 📊 **Statistiche Utilizzo**: Quote giornaliere e settimanali per utente
+- 🔧 **Gestione Quote**: Modifica limiti e reset manuale
+- ⏰ **Reset Automatico**: Quote resettate automaticamente dopo 24h (giornaliero) e 7 giorni (settimanale)
+
+#### Sistema di Blocco Quota
+Quando un utente raggiunge il limite di utilizzi:
+- ❌ **Input Disabilitato**: L'input della chat viene bloccato
+- 📢 **Messaggio Informativo**: Viene mostrato un banner con:
+  - Numero di utilizzi raggiunto
+  - Tempo rimanente al reset
+  - Indicazioni per contattare gli amministratori
+- 🔒 **Protezione Lato Server**: Il blocco è implementato sia frontend che backend
+
+**Limiti Predefiniti:**
+- Utenti autenticati: 50 utilizzi/giorno, 300/settimana
+- Guest users: 20 utilizzi/giorno, 100/settimana
+
 #### Documentazione (`TinkAi > Documentation`)
 - Guida completa all'uso
 - Best practices
@@ -360,6 +380,24 @@ Google Gemini offre un tier gratuito generoso. Consulta: [Gemini Pricing](https:
 ### Posso personalizzare il sistema prompt?
 
 Sì! Modifica il file `backend/systemPrompt.js` per personalizzare il comportamento di TinkAi.
+
+### Come funziona il sistema di quote?
+
+TinkAi implementa un sistema di limitazione utilizzi per gestire l'accesso:
+- **Quota Giornaliera**: Resettata automaticamente dopo 24 ore dall'ultima interazione
+- **Quota Settimanale**: Resettata automaticamente dopo 7 giorni dall'ultima interazione
+- **Blocco Automatico**: Quando raggiunta, l'input viene disabilitato con un messaggio informativo
+- **Testing**: Usa il file `test-quota-system.php` per testare il sistema in sviluppo
+
+### Come modifico le quote di un utente?
+
+Due modalità:
+1. **Via Admin**: `TinkAi > Users` - clicca sull'utente e modifica i limiti
+2. **Via Database**: Modifica la tabella `wp_tinkai_users` direttamente
+
+### Come resetto manualmente la quota di un utente?
+
+Accedi a `TinkAi > Users`, trova l'utente e clicca "Reset Quota". In alternativa, usa il file `test-quota-system.php` per test rapidi.
 
 ### Come disinstallo completamente il plugin?
 

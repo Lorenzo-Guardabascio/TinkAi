@@ -46,6 +46,29 @@ $settings = get_option('tinkai_settings', array());
                         
                         <tr>
                             <th scope="row">
+                                <label for="ai_model">Modello AI</label>
+                            </th>
+                            <td>
+                                <select name="tinkai_settings[ai_model]" id="ai_model">
+                                    <optgroup label="Google Gemini">
+                                        <option value="gemini-2.5-flash" <?php selected($settings['ai_model'] ?? 'gemini-2.5-flash', 'gemini-2.5-flash'); ?>>Gemini 2.5 Flash</option>
+                                        <option value="gemini-2.0-flash-exp" <?php selected($settings['ai_model'] ?? '', 'gemini-2.0-flash-exp'); ?>>Gemini 2.0 Flash (sperimentale)</option>
+                                        <option value="gemini-1.5-flash" <?php selected($settings['ai_model'] ?? '', 'gemini-1.5-flash'); ?>>Gemini 1.5 Flash</option>
+                                        <option value="gemini-1.5-pro" <?php selected($settings['ai_model'] ?? '', 'gemini-1.5-pro'); ?>>Gemini 1.5 Pro</option>
+                                    </optgroup>
+                                    <optgroup label="OpenAI">
+                                        <option value="gpt-4o" <?php selected($settings['ai_model'] ?? '', 'gpt-4o'); ?>>GPT-4o</option>
+                                        <option value="gpt-4o-mini" <?php selected($settings['ai_model'] ?? '', 'gpt-4o-mini'); ?>>GPT-4o Mini</option>
+                                        <option value="gpt-4-turbo" <?php selected($settings['ai_model'] ?? '', 'gpt-4-turbo'); ?>>GPT-4 Turbo</option>
+                                        <option value="gpt-3.5-turbo" <?php selected($settings['ai_model'] ?? '', 'gpt-3.5-turbo'); ?>>GPT-3.5 Turbo</option>
+                                    </optgroup>
+                                </select>
+                                <p class="description">Seleziona il modello AI specifico da utilizzare. Assicurati che corrisponda al provider selezionato.</p>
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <th scope="row">
                                 <label for="gemini_api_key">Gemini API Key</label>
                             </th>
                             <td>

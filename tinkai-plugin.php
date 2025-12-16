@@ -345,6 +345,7 @@ class TinkAi_Plugin {
         $sanitized = array();
         
         $sanitized['api_provider'] = sanitize_text_field($input['api_provider'] ?? 'gemini');
+        $sanitized['ai_model'] = sanitize_text_field($input['ai_model'] ?? 'gemini-2.5-flash');
         $sanitized['gemini_api_key'] = sanitize_text_field($input['gemini_api_key'] ?? '');
         $sanitized['openai_api_key'] = sanitize_text_field($input['openai_api_key'] ?? '');
         $sanitized['nodejs_port'] = absint($input['nodejs_port'] ?? 3000);
@@ -393,6 +394,7 @@ class TinkAi_Plugin {
             'ajaxUrl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('tinkai_nonce'),
             'apiProvider' => $settings['api_provider'] ?? 'gemini',
+            'aiModel' => $settings['ai_model'] ?? 'gemini-2.5-flash',
             'enableMetrics' => $settings['enable_metrics'] ?? true,
             'enableFeedback' => $settings['enable_feedback'] ?? true,
             'enableDarkMode' => $settings['enable_dark_mode'] ?? true,

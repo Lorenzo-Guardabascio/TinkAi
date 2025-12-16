@@ -359,7 +359,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 formData.append('endpoint', 'chat');
                 formData.append('data', JSON.stringify({ 
                     message: text,
-                    history: currentHistory 
+                    history: currentHistory,
+                    model: tinkaiConfig.aiModel || 'gemini-2.5-flash'
                 }));
                 
                 response = await fetch(tinkaiConfig.ajaxUrl, {
@@ -381,7 +382,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     },
                     body: JSON.stringify({ 
                         message: text,
-                        history: currentHistory 
+                        history: currentHistory,
+                        model: (typeof tinkaiConfig !== 'undefined' && tinkaiConfig.aiModel) ? tinkaiConfig.aiModel : 'gemini-2.5-flash'
                     })
                 });
             }

@@ -79,7 +79,7 @@ const cognitiveMetrics = new CognitiveMetrics();
 
 // Chat Endpoint
 app.post('/api/chat', rateLimitMiddleware, async (req, res) => {
-    const { message, history, systemPromptOverride } = req.body;
+    const { message, history, systemPromptOverride, model } = req.body;
     const provider = process.env.AI_PROVIDER || 'gemini';
 
     // Validazione input
@@ -129,15 +129,17 @@ app.post('/api/chat', rateLimitMiddleware, async (req, res) => {
             }
             messages.push({ role: "user", content: sanitizedMessage });
 
+            const modelName = model && model.startsWith('gpt') ? model : "gpt-4o-mini";
             const completion = await openai.chat.completions.create({
                 messages: messages,
-                model: "gpt-4", // or gpt-3.5-turbo
+                model: modelName,
             });
             reply = completion.choices[0].message.content;
 
         } else if (provider === 'gemini' && genAI) {
-            // Using user-specified model gemini-2.5-flash
-            const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+            // Using user-specified model or default
+            const modelName = model && model.startsWith('gemini') ? model : "gemini-2.5-flash";
+            const geminiModel = genAI.getGenerativeModel({ model: modelName });
             
             // Costruisci la history per Gemini con il prompt attivo (può essere variant)
             const geminiHistory = [
@@ -161,7 +163,7 @@ app.post('/api/chat', rateLimitMiddleware, async (req, res) => {
                 });
             }
 
-            const chat = model.startChat({
+            const chat = geminiModel.startChat({
                 history: geminiHistory,
             });
             const result = await chat.sendMessage(sanitizedMessage);

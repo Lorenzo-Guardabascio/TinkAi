@@ -836,6 +836,7 @@ body.dark-mode .quota-exceeded-warning .quota-text span {
     background: rgba(0, 0, 0, 0.75);
     backdrop-filter: blur(8px);
     z-index: -1;
+    cursor: pointer;
 }
 
 .experimental-disclaimer .disclaimer-content {

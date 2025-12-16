@@ -1,4 +1,6 @@
-:root {
+/* TinkAi Plugin Styles - Scoped to avoid conflicts */
+
+.tinkai-wrapper {
     --bg-color: #ffffff;
     --text-color: #1a1a1a;
     --accent-color: #000000;
@@ -8,43 +10,38 @@
     --border-color: #e0e0e0;
     --error-color: #d32f2f;
     --error-bg: #ffebee;
-}
-
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
-body {
-    font-family: 'Inter', sans-serif;
+    
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     background-color: var(--bg-color);
     color: var(--text-color);
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
     transition: background-color 0.3s ease, color 0.3s ease;
+    min-height: 500px;
+    position: relative;
+}
+.tinkai-wrapper .chat-container{
+    max-height:100vh;
+}
+.tinkai-wrapper * {
+    box-sizing: border-box;
 }
 
-.container {
+.tinkai-wrapper .container {
     width: 100%;
     max-width: 800px;
-    height: 100%;
     display: flex;
     flex-direction: column;
     padding: 20px;
+    padding-bottom: 0;
 }
 
-header {
+.tinkai-wrapper header {
     text-align: center;
     padding: 20px 0;
     margin-bottom: 20px;
     position: relative;
 }
 
-.header-actions {
+.tinkai-wrapper .header-actions {
     position: absolute;
     top: 20px;
     right: 0;
@@ -52,7 +49,7 @@ header {
     gap: 10px;
 }
 
-.theme-toggle {
+.tinkai-wrapper .theme-toggle {
     background: transparent;
     border: 1px solid var(--border-color);
     border-radius: 6px;
@@ -67,13 +64,13 @@ header {
     min-height: 44px;
 }
 
-.theme-toggle:hover {
+.tinkai-wrapper .theme-toggle:hover {
     background-color: var(--message-bg-user);
     color: var(--text-color);
     border-color: var(--text-color);
 }
 
-.icon-btn {
+.tinkai-wrapper .icon-btn {
     background: transparent;
     border: 1px solid var(--border-color);
     border-radius: 6px;
@@ -88,7 +85,7 @@ header {
     min-height: 44px;
 }
 
-.icon-btn:hover:not(:disabled) {
+.tinkai-wrapper .icon-btn:hover:not(:disabled) {
     background-color: var(--message-bg-user);
     color: var(--text-color);
     border-color: var(--text-color);
@@ -97,77 +94,79 @@ header {
 
 /* Responsive Mobile */
 @media (max-width: 768px) {
-    .container {
+    .tinkai-wrapper .container {
         padding: 10px;
     }
     
-    .logo {
+    .tinkai-wrapper .logo {
         font-size: 1.5rem;
     }
     
-    .payoff {
+    .tinkai-wrapper .payoff {
         font-size: 0.8rem;
     }
     
-    .header-actions {
+    .tinkai-wrapper .header-actions {
         position: static;
         justify-content: center;
         margin-top: 15px;
     }
     
-    .message {
+    .tinkai-wrapper .message {
         max-width: 90%;
         font-size: 0.95rem;
     }
     
-    .input-area {
+    .tinkai-wrapper .input-area {
         padding: 15px 10px;
     }
     
-    input[type=\"text\"] {
+    .tinkai-wrapper input[type="text"] {
         font-size: 16px; /* Previene zoom iOS */
     }
 }
 
-.logo {
+.tinkai-wrapper .logo {
     font-size: 2rem;
     font-weight: 500;
     letter-spacing: -0.05em;
     margin-bottom: 5px;
 }
 
-.payoff {
+.tinkai-wrapper .payoff {
     font-size: 0.9rem;
     color: var(--secondary-text);
     font-weight: 300;
 }
 
-.chat-container {
+.tinkai-wrapper .chat-container {
     flex: 1;
     overflow-y: auto;
     padding: 20px;
+    padding-bottom: 100px;
     display: flex;
     flex-direction: column;
     gap: 20px;
     scroll-behavior: smooth;
+    min-height: 300px;
 }
 
-.message {
+.tinkai-wrapper .message {
     max-width: 80%;
     padding: 15px 20px;
     border-radius: 12px;
     line-height: 1.5;
     font-size: 1rem;
-    animation: fadeIn 0.3s ease;
+    animation: tinkaiMessageFadeIn 0.3s ease;
     position: relative;
 }
 
-.message-text {
+.tinkai-wrapper .message-text {
     display: block;
     margin-bottom: 8px;
 }
 
-.feedback-buttons {
+.tinkai-wrapper .feedback-buttons {
     display: flex;
     gap: 8px;
     margin-top: 8px;
@@ -177,11 +176,11 @@ header {
     transition: opacity 0.2s;
 }
 
-.message:hover .feedback-buttons {
+.tinkai-wrapper .message:hover .feedback-buttons {
     opacity: 1;
 }
 
-.feedback-btn {
+.tinkai-wrapper .feedback-btn {
     background: transparent;
     border: 1px solid var(--border-color);
     border-radius: 4px;
@@ -194,7 +193,7 @@ header {
     justify-content: center;
 }
 
-.feedback-btn:hover:not(:disabled) {
+.tinkai-wrapper .feedback-btn:hover:not(:disabled) {
     background: var(--message-bg-user);
     border-color: var(--accent-color);
     color: var(--accent-color);
@@ -202,69 +201,69 @@ header {
     transform: scale(1.05);
 }
 
-.feedback-btn:disabled {
+.tinkai-wrapper .feedback-btn:disabled {
     cursor: default;
     opacity: 0.4;
 }
 
-.feedback-btn.active {
+.tinkai-wrapper .feedback-btn.active {
     background: var(--accent-color);
     border-color: var(--accent-color);
     color: white;
     opacity: 1;
 }
 
-.feedback-hint {
+.tinkai-wrapper .feedback-hint {
     font-size: 0.75rem;
     color: var(--secondary-text);
     font-style: italic;
     margin-top: 6px;
-    animation: fadeIn 0.3s ease;
+    animation: tinkaiMessageFadeIn 0.3s ease;
 }
 
-.bot-message {
+.tinkai-wrapper .bot-message {
     align-self: flex-start;
     background-color: var(--message-bg-bot);
     border: 1px solid var(--border-color);
     color: var(--text-color);
 }
 
-.user-message {
+.tinkai-wrapper .user-message {
     align-self: flex-end;
     background-color: var(--message-bg-user);
     color: var(--text-color);
 }
 
-.error-message {
+.tinkai-wrapper .error-message {
     background-color: var(--error-bg);
     border-color: var(--error-color);
     color: var(--error-color);
 }
 
 /* Typing Indicator */
-.typing-indicator {
+.tinkai-wrapper .typing-indicator {
     display: flex;
     gap: 5px;
     padding: 15px 20px;
 }
 
-.typing-indicator span {
+.tinkai-wrapper .typing-indicator span {
     width: 8px;
     height: 8px;
     background-color: var(--secondary-text);
     border-radius: 50%;
-    animation: typing 1.4s infinite;
+    animation: tinkaiTyping 1.4s infinite;
 }
 
-.typing-indicator span:nth-child(2) {
+.tinkai-wrapper .typing-indicator span:nth-child(2) {
     animation-delay: 0.2s;
 }
 
-.typing-indicator span:nth-child(3) {
+.tinkai-wrapper .typing-indicator span:nth-child(3) {
     animation-delay: 0.4s;
 }
 
-@keyframes typing {
+@keyframes tinkaiTyping {
     0%, 60%, 100% {
         opacity: 0.3;
         transform: translateY(0);
@@ -275,14 +274,21 @@ header {
     }
 }
 
-.input-area {
+.tinkai-wrapper .input-area {
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    right: 0;
     padding: 20px;
     display: flex;
     gap: 10px;
-    border-top: 1px solid transparent;
+    background: var(--bg-color);
+    border-top: 1px solid var(--border-color);
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+    z-index: 1000;
 }
 
-input[type="text"] {
+.tinkai-wrapper input[type="text"] {
     flex: 1;
     padding: 15px;
     border: 1px solid var(--border-color);
@@ -294,11 +300,11 @@ input[type="text"] {
     min-height: 44px; /* Touch target mobile */
 }
 
-input[type="text"]:focus {
+.tinkai-wrapper input[type="text"]:focus {
     border-color: var(--accent-color);
 }
 
-button {
+.tinkai-wrapper button {
     background: none;
     border: none;
     cursor: pointer;
@@ -309,57 +315,59 @@ button {
     min-height: 44px;
 }
 
-button:hover:not(:disabled) {
+.tinkai-wrapper button:hover:not(:disabled) {
     opacity: 0.7;
 }
 
-button:disabled {
+.tinkai-wrapper button:disabled {
     opacity: 0.3;
     cursor: not-allowed;
 }
 
-input[type="text"]:disabled {
+.tinkai-wrapper input[type="text"]:disabled {
     opacity: 0.6;
     background-color: #f9f9f9;
 }
 
-@keyframes fadeIn {
+@keyframes tinkaiMessageFadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* Scrollbar minimal */
-::-webkit-scrollbar {
+/* Scrollbar minimal - Only for tinkai wrapper */
+.tinkai-wrapper ::-webkit-scrollbar {
     width: 6px;
 }
-::-webkit-scrollbar-track {
+.tinkai-wrapper ::-webkit-scrollbar-track {
     background: transparent;
 }
-::-webkit-scrollbar-thumb {
+.tinkai-wrapper ::-webkit-scrollbar-thumb {
     background: #e0e0e0;
     border-radius: 3px;
 }
 
 /* Privacy Banner */
-.privacy-banner {
+.tinkai-wrapper .privacy-banner,
+#tinkai-privacy-banner {
     position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
-    background: var(--accent-color);
+    background: var(--accent-color, #000000);
     color: white;
     padding: 20px;
     box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
     z-index: 1000;
-    animation: slideUp 0.3s ease;
+    animation: tinkaiSlideUp 0.3s ease;
 }
 
-@keyframes slideUp {
+@keyframes tinkaiSlideUp {
     from { transform: translateY(100%); }
     to { transform: translateY(0); }
 }
 
-.privacy-content {
+.tinkai-wrapper .privacy-content,
+#tinkai-privacy-banner .privacy-content {
     max-width: 800px;
     margin: 0 auto;
     display: flex;
@@ -368,32 +376,37 @@ input[type="text"]:disabled {
     gap: 20px;
 }
 
-.privacy-content p {
+.tinkai-wrapper .privacy-content p,
+#tinkai-privacy-banner .privacy-content p {
     margin: 0;
     font-size: 0.9rem;
     line-height: 1.5;
 }
 
-.privacy-actions {
+.tinkai-wrapper .privacy-actions,
+#tinkai-privacy-banner .privacy-actions {
     display: flex;
     gap: 15px;
     align-items: center;
     flex-shrink: 0;
 }
 
-.privacy-link {
+.tinkai-wrapper .privacy-link,
+#tinkai-privacy-banner .privacy-link {
     color: white;
     text-decoration: underline;
     font-size: 0.9rem;
     cursor: pointer;
 }
 
-.privacy-link:hover {
+.tinkai-wrapper .privacy-link:hover,
+#tinkai-privacy-banner .privacy-link:hover {
     opacity: 0.8;
 }
 
 /* Modal */
-.modal {
+.tinkai-wrapper .modal,
+.tinkai-modal {
     position: fixed;
     top: 0;
     left: 0;
@@ -404,10 +417,11 @@ input[type="text"]:disabled {
     align-items: center;
     justify-content: center;
     z-index: 2000;
-    animation: fadeIn 0.3s ease;
+    animation: tinkaiMessageFadeIn 0.3s ease;
 }
 
-.modal-content {
+.tinkai-wrapper .modal-content,
+.tinkai-modal .modal-content {
     background: white;
     border-radius: 12px;
     padding: 30px;
@@ -417,29 +431,34 @@ input[type="text"]:disabled {
     margin: 20px;
 }
 
-.modal-content h2 {
+.tinkai-wrapper .modal-content h2,
+.tinkai-modal .modal-content h2 {
     margin-top: 0;
     margin-bottom: 20px;
 }
 
-.modal-content h3 {
+.tinkai-wrapper .modal-content h3,
+.tinkai-modal .modal-content h3 {
     font-size: 1.1rem;
     margin-top: 20px;
     margin-bottom: 10px;
 }
 
-.modal-body {
+.tinkai-wrapper .modal-body,
+.tinkai-modal .modal-body {
     margin-bottom: 20px;
 }
 
-.modal-body ul {
+.tinkai-wrapper .modal-body ul,
+.tinkai-modal .modal-body ul {
     margin-left: 20px;
     line-height: 1.8;
 }
 
-.btn {
+.tinkai-wrapper .btn,
+.tinkai-modal .btn {
     padding: 12px 24px;
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--border-color, #e0e0e0);
     background: white;
     border-radius: 8px;
     cursor: pointer;
@@ -448,29 +467,34 @@ input[type="text"]:disabled {
     transition: all 0.2s;
 }
 
-.btn:hover {
-    background: var(--message-bg-user);
-    border-color: var(--accent-color);
+.tinkai-wrapper .btn:hover,
+.tinkai-modal .btn:hover {
+    background: var(--message-bg-user, #f0f0f0);
+    border-color: var(--accent-color, #000000);
 }
 
-.btn-primary {
-    background: var(--accent-color);
+.tinkai-wrapper .btn-primary,
+.tinkai-modal .btn-primary {
+    background: var(--accent-color, #000000);
     color: white;
-    border-color: var(--accent-color);
+    border-color: var(--accent-color, #000000);
 }
 
-.btn-primary:hover {
+.tinkai-wrapper .btn-primary:hover,
+.tinkai-modal .btn-primary:hover {
     opacity: 0.9;
-    background: var(--accent-color);
+    background: var(--accent-color, #000000);
 }
 
 @media (max-width: 768px) {
-    .privacy-content {
+    .tinkai-wrapper .privacy-content,
+    #tinkai-privacy-banner .privacy-content {
         flex-direction: column;
         text-align: center;
     }
     
-    .modal-content {
+    .tinkai-wrapper .modal-content,
+    .tinkai-modal .modal-content {
         margin: 10px;
         padding: 20px;
         max-height: 90vh;
@@ -478,13 +502,14 @@ input[type="text"]:disabled {
 }
 
 /* Toast Notifications */
-.toast {
+.tinkai-wrapper .toast,
+.tinkai-toast {
     position: fixed;
     bottom: 80px;
     left: 50%;
     transform: translateX(-50%) translateY(100px);
-    background: var(--accent-color);
-    color: var(--bg-color);
+    background: var(--accent-color, #000000);
+    color: var(--bg-color, #ffffff);
     padding: 12px 24px;
     border-radius: 8px;
     font-size: 0.9rem;
@@ -495,7 +520,8 @@ input[type="text"]:disabled {
     pointer-events: none;
 }
 
-.toast.show {
+.tinkai-wrapper .toast.show,
+.tinkai-toast.show {
     opacity: 1;
     transform: translateX(-50%) translateY(0);
 }
@@ -503,7 +529,7 @@ input[type="text"]:disabled {
 /* ===== TESTING PLATFORM STYLES ===== */
 
 /* Quota Widget */
-.quota-widget {
+.tinkai-wrapper .quota-widget {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -514,12 +540,12 @@ input[type="text"]:disabled {
     border-radius: 6px;
 }
 
-.quota-widget.quota-warning {
+.tinkai-wrapper .quota-widget.quota-warning {
     color: var(--error-color);
     font-weight: 600;
 }
 
-.quota-exceeded-warning {
+.tinkai-wrapper .quota-exceeded-warning {
     position: fixed;
     top: 50%;
     left: 50%;
@@ -533,17 +559,17 @@ input[type="text"]:disabled {
     z-index: 10000;
 }
 
-.quota-exceeded-warning h3 {
+.tinkai-wrapper .quota-exceeded-warning h3 {
     margin: 0 0 15px 0;
     color: var(--error-color);
 }
 
-.quota-exceeded-warning p {
+.tinkai-wrapper .quota-exceeded-warning p {
     margin: 0 0 20px 0;
     line-height: 1.6;
 }
 
-.quota-exceeded-warning button {
+.tinkai-wrapper .quota-exceeded-warning button {
     background: var(--accent-color);
     color: var(--bg-color);
     border: none;
@@ -554,7 +580,7 @@ input[type="text"]:disabled {
 }
 
 /* Feedback Modal */
-.feedback-modal {
+.tinkai-wrapper .feedback-modal {
     position: fixed;
     top: 0;
     left: 0;
@@ -563,7 +589,7 @@ input[type="text"]:disabled {
     z-index: 9999;
 }
 
-.modal-overlay {
+.tinkai-wrapper .modal-overlay {
     position: absolute;
     top: 0;
     left: 0;
@@ -573,39 +599,20 @@ input[type="text"]:disabled {
     backdrop-filter: blur(4px);
 }
 
-.modal-content {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: var(--bg-color);
-    border-radius: 16px;
-    padding: 30px;
-    max-width: 500px;
-    width: 90%;
-    max-height: 80vh;
-    overflow-y: auto;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-}
+/* Note: modal-content already defined above, reusing */
 
-.modal-content h2 {
-    margin: 0 0 20px 0;
-    color: var(--text-color);
-    font-size: 1.5rem;
-}
-
-.form-group {
+.tinkai-wrapper .form-group {
     margin-bottom: 20px;
 }
 
-.form-group label {
+.tinkai-wrapper .form-group label {
     display: block;
     margin-bottom: 8px;
     font-weight: 600;
     color: var(--text-color);
 }
 
-.form-group textarea {
+.tinkai-wrapper .form-group textarea {
     width: 100%;
     padding: 12px;
     border: 1px solid var(--border-color);
@@ -617,48 +624,49 @@ input[type="text"]:disabled {
     resize: vertical;
 }
 
-.form-group textarea:focus {
+.tinkai-wrapper .form-group textarea:focus {
     outline: none;
     border-color: var(--accent-color);
 }
 
-.rating-section {
+.tinkai-wrapper .rating-section {
     margin-bottom: 20px;
 }
 
-.rating-section label {
+.tinkai-wrapper .rating-section label {
     display: block;
     margin-bottom: 10px;
     font-weight: 600;
 }
 
-.star-rating {
+.tinkai-wrapper .star-rating {
     display: flex;
     gap: 8px;
     font-size: 2rem;
     cursor: pointer;
 }
 
-.star {
+.tinkai-wrapper .star {
     opacity: 0.3;
     transition: opacity 0.2s, transform 0.2s;
 }
 
-.star:hover {
+.tinkai-wrapper .star:hover {
     transform: scale(1.2);
 }
 
-.star.active {
+.tinkai-wrapper .star.active {
     opacity: 1;
 }
 
-.modal-actions {
+.tinkai-wrapper .modal-actions {
     display: flex;
     gap: 10px;
     margin-top: 25px;
 }
 
-.btn-primary, .btn-secondary {
+.tinkai-wrapper .btn-primary, 
+.tinkai-wrapper .btn-secondary {
     flex: 1;
     padding: 12px 20px;
     border: none;
@@ -668,27 +676,27 @@ input[type="text"]:disabled {
     transition: all 0.2s;
 }
 
-.btn-primary {
+.tinkai-wrapper .btn-primary {
     background: var(--accent-color);
     color: var(--bg-color);
 }
 
-.btn-primary:hover {
+.tinkai-wrapper .btn-primary:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-.btn-secondary {
+.tinkai-wrapper .btn-secondary {
     background: var(--message-bg-user);
     color: var(--text-color);
 }
 
-.btn-secondary:hover {
+.tinkai-wrapper .btn-secondary:hover {
     background: var(--border-color);
 }
 
 /* Header Buttons */
-.header-btn {
+.tinkai-wrapper .header-btn {
     padding: 8px 16px;
     background: var(--message-bg-user);
     color: var(--text-color);
@@ -700,30 +708,30 @@ input[type="text"]:disabled {
     transition: all 0.2s;
 }
 
-.header-btn:hover {
+.tinkai-wrapper .header-btn:hover {
     background: var(--accent-color);
     color: var(--bg-color);
     border-color: var(--accent-color);
 }
 
 /* Bug Report Button */
-.bug-report-btn {
+.tinkai-wrapper .bug-report-btn {
     background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
     color: white;
     border: none;
 }
 
-.bug-report-btn:hover {
+.tinkai-wrapper .bug-report-btn:hover {
     background: linear-gradient(135deg, #ff5252, #e53e3e);
 }
 
 /* Feedback Modal Button */
-.feedback-modal-btn {
+.tinkai-wrapper .feedback-modal-btn {
     background: linear-gradient(135deg, #667eea, #764ba2);
     color: white;
     border: none;
 }
 
-.feedback-modal-btn:hover {
+.tinkai-wrapper .feedback-modal-btn:hover {
     background: linear-gradient(135deg, #5568d3, #6a3c91);
 }

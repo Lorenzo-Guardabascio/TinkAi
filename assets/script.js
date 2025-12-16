@@ -23,6 +23,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Focus input on load
     userInput.focus();
 
+    // Show experimental disclaimer if needed
+    showExperimentalDisclaimer();
+
     // LocalStorage management
     function saveConversation() {
         try {
@@ -549,6 +552,146 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Initialize bug reporter
     initializeBugReporter();
+    
+    // ===== EXPERIMENTAL DISCLAIMER =====
+    function showExperimentalDisclaimer() {
+        console.log('🔍 TinkAi: Checking experimental disclaimer...');
+        
+        // Check if disclaimer was shown today
+        const lastShown = localStorage.getItem('tinkai_disclaimer_shown');
+        const today = new Date().toDateString();
+        
+        console.log('📅 Last shown:', lastShown);
+        console.log('📅 Today:', today);
+        
+        if (lastShown === today) {
+            console.log('✅ Disclaimer already shown today. Skipping.');
+            return; // Already shown today
+        }
+        
+        console.log('🚀 Showing experimental disclaimer modal...');
+        
+        // Detect user language (default to Italian)
+        const userLang = navigator.language.toLowerCase();
+        const isEnglish = userLang.startsWith('en');
+        
+        console.log('🌍 User language:', userLang, '| Using English:', isEnglish);
+        
+        const content = isEnglish ? {
+            title: '⚠️ Experimental Platform',
+            intro: 'Before you begin, please note:',
+            points: [
+                '<strong>Experimental Features:</strong> All functionalities are currently in beta testing and may not work as expected.',
+                '<strong>Data Sharing:</strong> Your conversations will be shared with AI service providers (Google/OpenAI) to generate responses.',
+                '<strong>Privacy Warning:</strong> Do not enter sensitive, personal, or confidential information in your conversations.',
+                '<strong>Data Retention:</strong> This platform is in early development stage. Data may be deleted without notice during updates or maintenance.',
+                '<strong>Ongoing Development:</strong> New features and integrations are constantly being added. Expect changes and improvements.'
+            ],
+            footer: 'By continuing to use TinkAi, you acknowledge and accept these conditions.',
+            button: 'I Understand',
+            checkbox: 'Don\'t show this again today'
+        } : {
+            title: '⚠️ Piattaforma Sperimentale',
+            intro: 'Prima di iniziare, ti informiamo che:',
+            points: [
+                '<strong>Funzionalità Sperimentali:</strong> Tutte le funzionalità sono in fase beta e potrebbero non funzionare come previsto.',
+                '<strong>Condivisione Dati:</strong> Le tue conversazioni saranno condivise con i fornitori di servizi AI (Google/OpenAI) per generare le risposte.',
+                '<strong>Avviso Privacy:</strong> Non inserire dati sensibili, personali o riservati nelle conversazioni.',
+                '<strong>Conservazione Dati:</strong> La piattaforma è in versione embrionale. I dati potrebbero essere cancellati senza preavviso durante aggiornamenti o manutenzioni.',
+                '<strong>Sviluppo Continuo:</strong> Nuove funzioni e integrazioni vengono aggiunte costantemente. Aspettati cambiamenti e miglioramenti.'
+            ],
+            footer: 'Continuando ad utilizzare TinkAi, accetti queste condizioni.',
+            button: 'Ho Capito',
+            checkbox: 'Non mostrare più oggi'
+        };
+        
+        const modal = document.createElement('div');
+        modal.id = 'experimental-disclaimer-modal';
+        modal.className = 'feedback-modal experimental-disclaimer';
+        modal.innerHTML = `
+            <div class="modal-overlay"></div>
+            <div class="modal-content disclaimer-content">
+                <div class="disclaimer-icon">⚠️</div>
+                <h2>${content.title}</h2>
+                <p class="disclaimer-intro">${content.intro}</p>
+                
+                <div class="disclaimer-list">
+                    ${content.points.map(point => `
+                        <div class="disclaimer-item">
+                            <span class="bullet">•</span>
+                            <span>${point}</span>
+                        </div>
+                    `).join('')}
+                </div>
+                
+                <div class="disclaimer-footer">
+                    <p>${content.footer}</p>
+                </div>
+                
+                <div class="disclaimer-actions">
+                    <label class="disclaimer-checkbox">
+                        <input type="checkbox" id="disclaimer-dont-show">
+                        <span>${content.checkbox}</span>
+                    </label>
+                    <button class="btn-primary disclaimer-btn" onclick="closeExperimentalDisclaimer()">
+                        ${content.button}
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
+        console.log('✨ Modal created and appended to body');
+        
+        // Click sull'overlay per chiudere
+        const overlay = modal.querySelector('.modal-overlay');
+        overlay.addEventListener('click', () => {
+            closeExperimentalDisclaimer();
+        });
+        
+        // Previeni chiusura quando si clicca sul contenuto
+        const modalContent = modal.querySelector('.disclaimer-content');
+        modalContent.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+        
+        // Fade in animation
+        setTimeout(() => {
+            modal.classList.add('show');
+            console.log('🎭 Modal animation triggered');
+        }, 50);
+    }
+    
+    window.closeExperimentalDisclaimer = function() {
+        console.log('🔒 Closing experimental disclaimer...');
+        const dontShow = document.getElementById('disclaimer-dont-show')?.checked;
+        const modal = document.getElementById('experimental-disclaimer-modal');
+        
+        console.log('Checkbox state:', dontShow);
+        
+        if (dontShow) {
+            // Save today's date
+            const today = new Date().toDateString();
+            localStorage.setItem('tinkai_disclaimer_shown', today);
+            console.log('💾 Saved preference to not show again today:', today);
+        }
+        
+        if (modal) {
+            modal.classList.remove('show');
+            setTimeout(() => {
+                modal.remove();
+                console.log('🗑️ Modal removed from DOM');
+            }, 300);
+        }
+    };
+    
+    // Helper function to reset disclaimer (for testing)
+    window.resetTinkAiDisclaimer = function() {
+        localStorage.removeItem('tinkai_disclaimer_shown');
+        console.log('🔄 Disclaimer reset! Reload the page to see it again.');
+        return 'Disclaimer will show on next page load';
+    };
     
     // Variabile globale per lo stato della quota
     let quotaStatus = {

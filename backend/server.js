@@ -8,10 +8,50 @@ const { GoogleGenerativeAI } = require('@google/generative-ai');
 const systemPrompt = require('./systemPrompt');
 const CognitiveMetrics = require('./cognitiveMetrics');
 
+// Load only WP_URL and PORT from .env
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Configuration from WordPress
+let config = {
+    AI_PROVIDER: 'gemini',
+    AI_MODEL: 'gemini-2.5-flash',
+    OPENAI_API_KEY: '',
+    GEMINI_API_KEY: ''
+};
+
+// Function to load configuration from WordPress
+async function loadConfigFromWordPress() {
+    try {
+        const fetch = (await import('node-fetch')).default;
+        const wpUrl = process.env.WP_URL || 'http://localhost';
+        const response = await fetch(`${wpUrl}/wp-admin/admin-ajax.php?action=tinkai_get_config`);
+        
+        if (response.ok) {
+            const data = await response.json();
+            if (data.success && data.data) {
+                config = {
+                    AI_PROVIDER: data.data.AI_PROVIDER || 'gemini',
+                    AI_MODEL: data.data.AI_MODEL || 'gemini-2.5-flash',
+                    OPENAI_API_KEY: data.data.OPENAI_API_KEY || '',
+                    GEMINI_API_KEY: data.data.GEMINI_API_KEY || ''
+                };
+                console.log('✓ Configuration loaded from WordPress');
+                console.log(`  Provider: ${config.AI_PROVIDER}`);
+                console.log(`  Model: ${config.AI_MODEL}`);
+                initializeAIClients();
+                return true;
+            }
+        }
+        console.warn('⚠ Failed to load config from WordPress, using defaults');
+        return false;
+    } catch (error) {
+        console.error('⚠ Error loading config from WordPress:', error.message);
+        return false;
+    }
+}
 
 // Rate limiting: max 20 richieste per IP ogni 15 minuti
 const requestCounts = new Map();
@@ -66,12 +106,16 @@ app.use(express.static(path.join(__dirname, '../')));
 let openai;
 let genAI;
 
-if (process.env.OPENAI_API_KEY) {
-    openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-}
+function initializeAIClients() {
+    if (config.OPENAI_API_KEY) {
+        openai = new OpenAI({ apiKey: config.OPENAI_API_KEY });
+        console.log('✓ OpenAI client initialized');
+    }
 
-if (process.env.GEMINI_API_KEY) {
-    genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+    if (config.GEMINI_API_KEY) {
+        genAI = new GoogleGenerativeAI(config.GEMINI_API_KEY);
+        console.log('✓ Gemini client initialized');
+    }
 }
 
 // Cognitive Metrics System
@@ -80,7 +124,7 @@ const cognitiveMetrics = new CognitiveMetrics();
 // Chat Endpoint
 app.post('/api/chat', rateLimitMiddleware, async (req, res) => {
     const { message, history, systemPromptOverride, model } = req.body;
-    const provider = process.env.AI_PROVIDER || 'gemini';
+    const provider = config.AI_PROVIDER || 'gemini';
 
     // Validazione input
     if (!message) {
@@ -222,7 +266,12 @@ app.get('/api/feedback/stats', (req, res) => {
     res.json(stats);
 });
 
-app.listen(PORT, '0.0.0.0', () => {
+app.listen(PORT, '0.0.0.0', async () => {
     console.log(`TinkAi Server running on port ${PORT}`);
     console.log(`Test locally: http://localhost:${PORT}`);
+    console.log('Loading configuration from WordPress...');
+    await loadConfigFromWordPress();
+    
+    // Reload config every 5 minutes to pick up changes
+    setInterval(loadConfigFromWordPress, 5 * 60 * 1000);
 });

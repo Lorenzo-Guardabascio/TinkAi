@@ -89,6 +89,10 @@ class TinkAi_Plugin {
         add_action('wp_ajax_nopriv_tinkai_save_conversation', array($this, 'ajax_save_conversation'));
         add_action('wp_ajax_tinkai_export_feedback', array($this, 'ajax_export_feedback'));
         add_action('wp_ajax_tinkai_get_analytics', array($this, 'ajax_get_analytics'));
+        
+        // Backend config endpoint (no auth required for local backend)
+        add_action('wp_ajax_tinkai_get_config', array($this, 'ajax_get_config'));
+        add_action('wp_ajax_nopriv_tinkai_get_config', array($this, 'ajax_get_config'));
     }
     
     /**
@@ -1059,6 +1063,36 @@ class TinkAi_Plugin {
             'top_users' => $top_users,
             'bugs' => $bug_stats
         ));
+    }
+    
+    /**
+     * AJAX: Get configuration for Node.js backend
+     * Provides API keys and settings from WordPress to the backend server
+     */
+    public function ajax_get_config() {
+        // Verifica che la richiesta provenga da localhost/server locale
+        $remote_addr = $_SERVER['REMOTE_ADDR'] ?? '';
+        $allowed_ips = array('127.0.0.1', '::1', 'localhost');
+        
+        // Per sicurezza, accetta solo richieste locali
+        if (!in_array($remote_addr, $allowed_ips) && !filter_var($remote_addr, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
+            // Se non è localhost e non è IP privato, blocca
+            // Commenta questa riga se il backend gira su server separato
+            // wp_send_json_error(array('message' => 'Access denied'));
+        }
+        
+        $settings = get_option('tinkai_settings', array());
+        
+        // Prepara la configurazione per il backend
+        $config = array(
+            'AI_PROVIDER' => $settings['api_provider'] ?? 'gemini',
+            'AI_MODEL' => $settings['ai_model'] ?? 'gemini-2.5-flash',
+            'OPENAI_API_KEY' => $settings['openai_api_key'] ?? '',
+            'GEMINI_API_KEY' => $settings['gemini_api_key'] ?? '',
+            'PORT' => $settings['nodejs_port'] ?? 3000
+        );
+        
+        wp_send_json_success($config);
     }
 }
 

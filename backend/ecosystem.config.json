@@ -2,7 +2,7 @@
   "apps": [{
     "name": "tinkai",
     "script": "./server.js",
-    "cwd": "/home/dev/web/tinkai.local/public_html/backend",
+    "cwd": "/home/Rastaban/web/tinkai.ai/public_html/wp-content/plugins/tinkai-plugin/backend",
     "instances": 1,
     "autorestart": true,
     "watch": false,
@@ -11,8 +11,8 @@
       "NODE_ENV": "production",
       "PORT": 3000
     },
-    "error_file": "/home/dev/web/tinkai.local/logs/pm2-error.log",
-    "out_file": "/home/dev/web/tinkai.local/logs/pm2-out.log",
+    "error_file": "/home/Rastaban/web/tinkai.ai/logs/pm2-error.log",
+    "out_file": "/home/Rastaban/web/tinkai.ai/logs/pm2-out.log",
     "log_date_format": "YYYY-MM-DD HH:mm:ss Z"
   }]
 }

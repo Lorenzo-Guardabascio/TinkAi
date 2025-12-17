@@ -840,6 +840,8 @@ body.dark-mode .quota-exceeded-warning .quota-text span {
 }
 
 .experimental-disclaimer .disclaimer-content {
+    max-height: 86vh;
+    overflow-y: auto;
     max-width: 650px;
     background: white;
     border-radius: 16px;

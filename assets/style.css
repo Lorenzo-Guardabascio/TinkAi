@@ -429,6 +429,7 @@
     max-height: 80vh;
     overflow-y: auto;
     margin: 20px;
+    backdrop-filter: blur(0px);
 }
 
 .tinkai-wrapper .modal-content h2,
@@ -659,6 +660,9 @@ body.dark-mode .quota-exceeded-warning .quota-text span {
     right: 0;
     bottom: 0;
     z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .tinkai-wrapper .modal-overlay {

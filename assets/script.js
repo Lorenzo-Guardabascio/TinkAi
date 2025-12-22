@@ -233,7 +233,13 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         `;
         
-        document.body.appendChild(modal);
+        // Appendi la modale all'interno di tinkai-wrapper
+        const wrapper = document.querySelector('.tinkai-wrapper');
+        if (wrapper) {
+            wrapper.appendChild(modal);
+        } else {
+            document.body.appendChild(modal);
+        }
     }
     
     window.resetFeedbackButtons = function() {

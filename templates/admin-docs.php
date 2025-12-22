@@ -7,116 +7,116 @@ if (!defined('ABSPATH')) exit;
 ?>
 
 <div class="wrap">
-    <h1>📚 Documentazione TinkAi</h1>
+    <h1>📚 TinkAi Documentation</h1>
     
     <div class="tinkai-docs-container">
         
         <!-- Introduction -->
         <div class="doc-section">
-            <h2>🎯 Cos'è TinkAi?</h2>
+            <h2>🎯 What is TinkAi?</h2>
             <p>
-                TinkAi è un assistente AI progettato per <strong>stimolare il pensiero critico</strong> invece di sostituirlo. 
-                Non è un semplice chatbot che fornisce risposte pronte, ma un companion intellettuale che ti aiuta a:
+                TinkAi is an AI assistant designed to <strong>stimulate critical thinking</strong> instead of replacing it. 
+                It's not a simple chatbot that provides ready-made answers, but an intellectual companion that helps you:
             </p>
             <ul>
-                <li>✨ Sviluppare il pensiero critico e analitico</li>
-                <li>🧠 Imparare a ragionare autonomamente</li>
-                <li>🔍 Approfondire concetti senza scorciatoie</li>
-                <li>💡 Trasformare domande superficiali in riflessioni profonde</li>
+                <li>✨ Develop critical and analytical thinking</li>
+                <li>🧠 Learn to reason independently</li>
+                <li>🔍 Deepen concepts without shortcuts</li>
+                <li>💡 Transform superficial questions into deep reflections</li>
             </ul>
         </div>
         
         <!-- Setup Instructions -->
         <div class="doc-section">
-            <h2>⚙️ Installazione e Configurazione</h2>
+            <h2>⚙️ Installation and Configuration</h2>
             
-            <h3>1. Configurazione API</h3>
-            <p>TinkAi può utilizzare due provider AI:</p>
+            <h3>1. API Configuration</h3>
+            <p>TinkAi can use two AI providers:</p>
             <ul>
                 <li>
-                    <strong>Google Gemini</strong> (consigliato per iniziare)
+                    <strong>Google Gemini</strong> (recommended to get started)
                     <ul>
-                        <li>Vai su <a href="https://makersuite.google.com/app/apikey" target="_blank">Google AI Studio</a></li>
-                        <li>Crea una nuova API key</li>
-                        <li>Incollala nelle impostazioni del plugin</li>
+                        <li>Go to <a href="https://makersuite.google.com/app/apikey" target="_blank">Google AI Studio</a></li>
+                        <li>Create a new API key</li>
+                        <li>Paste it in the plugin settings</li>
                     </ul>
                 </li>
                 <li>
                     <strong>OpenAI (GPT)</strong>
                     <ul>
-                        <li>Vai su <a href="https://platform.openai.com/api-keys" target="_blank">OpenAI Platform</a></li>
-                        <li>Crea una nuova API key</li>
-                        <li>Incollala nelle impostazioni del plugin</li>
+                        <li>Go to <a href="https://platform.openai.com/api-keys" target="_blank">OpenAI Platform</a></li>
+                        <li>Create a new API key</li>
+                        <li>Paste it in the plugin settings</li>
                     </ul>
                 </li>
             </ul>
             
-            <h3>2. Avvio del Backend Node.js</h3>
+            <h3>2. Starting the Node.js Backend</h3>
             <p>
-                <strong>⚠️ Importante:</strong> TinkAi utilizza un backend Node.js separato che deve essere avviato manualmente.
+                <strong>⚠️ Important:</strong> TinkAi uses a separate Node.js backend that must be started manually.
             </p>
             
-            <h4>Metodo 1: Esecuzione Manuale</h4>
+            <h4>Method 1: Manual Execution</h4>
             <pre>cd <?php echo ABSPATH; ?>wp-content/plugins/tinkai-plugin/backend/
 node server.js</pre>
             
-            <h4>Metodo 2: Esecuzione Persistente con PM2 (consigliato)</h4>
-            <pre># Installa PM2 globalmente
+            <h4>Method 2: Persistent Execution with PM2 (recommended)</h4>
+            <pre># Install PM2 globally
 npm install -g pm2
 
-# Avvia il backend
+# Start the backend
 cd <?php echo ABSPATH; ?>wp-content/plugins/tinkai-plugin/backend/
 pm2 start ecosystem.config.json
 
-# Verifica status
+# Check status
 pm2 status
 
-# Salva configurazione per avvio automatico
+# Save configuration for automatic startup
 pm2 save
 pm2 startup</pre>
             
-            <h3>3. Inserimento in Pagine/Post</h3>
-            <p>Usa lo shortcode <code>[tinkai]</code> per inserire la chat:</p>
+            <h3>3. Inserting in Pages/Posts</h3>
+            <p>Use the shortcode <code>[tinkai]</code> to insert the chat:</p>
             
-            <h4>Esempi:</h4>
-            <pre>// Configurazione base
+            <h4>Examples:</h4>
+            <pre>// Basic configuration
 [tinkai]
 
-// Con tema scuro
+// With dark theme
 [tinkai theme="dark"]
 
-// Altezza personalizzata
+// Custom height
 [tinkai height="800px"]
 
-// Larghezza personalizzata  
+// Custom width  
 [tinkai width="90%"]
 
-// Combinazione opzioni
+// Combined options
 [tinkai theme="dark" height="700px" width="100%"]</pre>
         </div>
         
         <!-- Usage Guide -->
         <div class="doc-section">
-            <h2>🎓 Come Usare TinkAi</h2>
+            <h2>🎓 How to Use TinkAi</h2>
             
-            <h3>❌ Cosa NON Fare</h3>
+            <h3>❌ What NOT to Do</h3>
             <div class="warning-box">
-                <p><strong>Evita domande pigre come:</strong></p>
+                <p><strong>Avoid lazy questions like:</strong></p>
                 <ul>
-                    <li>"Dammi la risposta a questo problema"</li>
-                    <li>"Fai i compiti al posto mio"</li>
-                    <li>"Qual è la soluzione?"</li>
+                    <li>"Give me the answer to this problem"</li>
+                    <li>"Do my homework for me"</li>
+                    <li>"What is the solution?"</li>
                 </ul>
-                <p>TinkAi è progettato per riconoscere questi pattern e ti guiderà verso il pensiero critico.</p>
+                <p>TinkAi is designed to recognize these patterns and will guide you toward critical thinking.</p>
             </div>
             
-            <h3>✅ Cosa Fare</h3>
+            <h3>✅ What to Do</h3>
             <div class="success-box">
-                <p><strong>Esempi di domande efficaci:</strong></p>
+                <p><strong>Examples of effective questions:</strong></p>
                 <ul>
-                    <li>"Non capisco questo concetto di [argomento], puoi aiutarmi a ragionarci?"</li>
-                    <li>"Sto cercando di risolvere [problema], da dove potrei iniziare?"</li>
-                    <li>"Come posso migliorare il mio approccio a [argomento]?"</li>
+                    <li>"I don't understand this concept of [topic], can you help me reason through it?"</li>
+                    <li>"I'm trying to solve [problem], where could I start?"</li>
+                    <li>"How can I improve my approach to [topic]?"</li>
                 </ul>
             </div>
             
@@ -124,26 +124,26 @@ pm2 startup</pre>
             <table class="widefat">
                 <thead>
                     <tr>
-                        <th>Scorciatoia</th>
-                        <th>Azione</th>
+                        <th>Shortcut</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <td><code>Ctrl/Cmd + K</code></td>
-                        <td>Nuova conversazione</td>
+                        <td>New conversation</td>
                     </tr>
                     <tr>
                         <td><code>Ctrl/Cmd + E</code></td>
-                        <td>Esporta conversazione</td>
+                        <td>Export conversation</td>
                     </tr>
                     <tr>
                         <td><code>Ctrl/Cmd + D</code></td>
-                        <td>Cambia tema (chiaro/scuro)</td>
+                        <td>Toggle theme (light/dark)</td>
                     </tr>
                     <tr>
                         <td><code>Esc</code></td>
-                        <td>Focus sull'input</td>
+                        <td>Focus on input</td>
                     </tr>
                 </tbody>
             </table>
@@ -151,107 +151,107 @@ pm2 startup</pre>
         
         <!-- Metrics Explanation -->
         <div class="doc-section">
-            <h2>📊 Comprendere le Metriche</h2>
+            <h2>📊 Understanding Metrics</h2>
             
             <h3>🎯 TinkAi Score</h3>
             <p>
-                Indice da 0 a 100 che misura la qualità cognitiva delle interazioni. 
-                Un punteggio alto indica che TinkAi sta stimolando efficacemente il pensiero critico.
+                An index from 0 to 100 that measures the cognitive quality of interactions. 
+                A high score indicates that TinkAi is effectively stimulating critical thinking.
             </p>
             
-            <h3>💭 Risposte Riflessive</h3>
+            <h3>💭 Reflective Responses</h3>
             <p>
-                Risposte che guidano l'utente verso la riflessione autonoma attraverso domande strategiche, 
-                esempi guidati e inviti all'approfondimento.
+                Responses that guide the user toward independent reflection through strategic questions, 
+                guided examples and invitations to deepen.
             </p>
             
-            <h3>📝 Risposte Dirette</h3>
+            <h3>📝 Direct Responses</h3>
             <p>
-                Risposte che forniscono informazioni dirette a domande specifiche e ben formulate. 
-                Non sempre "diretta" significa "peggiore" - dipende dal contesto.
+                Responses that provide direct information to specific and well-formed questions. 
+                Not always "direct" means "worse" - it depends on the context.
             </p>
         </div>
         
         <!-- Privacy & GDPR -->
         <div class="doc-section">
-            <h2>🔐 Privacy e GDPR</h2>
+            <h2>🔐 Privacy and GDPR</h2>
             
-            <h3>Dove vengono salvati i dati?</h3>
+            <h3>Where is data saved?</h3>
             <ul>
-                <li><strong>Conversazioni:</strong> Solo nel browser dell'utente (localStorage), mai sui server</li>
-                <li><strong>Feedback (👍/👎):</strong> Solo nel browser dell'utente</li>
-                <li><strong>Metriche Cognitive:</strong> Salvate nel backend Node.js per analisi aggregate (nessun dato personale)</li>
+                <li><strong>Conversations:</strong> Only in the user's browser (localStorage), never on servers</li>
+                <li><strong>Feedback (👍/👎):</strong> Only in the user's browser</li>
+                <li><strong>Cognitive Metrics:</strong> Saved in the Node.js backend for aggregate analysis (no personal data)</li>
             </ul>
             
-            <h3>Cosa viene inviato ai provider AI?</h3>
+            <h3>What is sent to AI providers?</h3>
             <p>
-                I messaggi vengono inviati a Google Gemini o OpenAI per elaborazione, secondo le loro policy di privacy:
+                Messages are sent to Google Gemini or OpenAI for processing, according to their privacy policies:
             </p>
             <ul>
                 <li><a href="https://policies.google.com/privacy" target="_blank">Google Privacy Policy</a></li>
                 <li><a href="https://openai.com/policies/privacy-policy" target="_blank">OpenAI Privacy Policy</a></li>
             </ul>
             
-            <h3>Banner Privacy</h3>
+            <h3>Privacy Banner</h3>
             <p>
-                TinkAi mostra automaticamente un banner informativo al primo utilizzo, 
-                spiegando trasparenza e gestione dati.
+                TinkAi automatically displays an informative banner on first use, 
+                explaining transparency and data management.
             </p>
         </div>
         
         <!-- Troubleshooting -->
         <div class="doc-section">
-            <h2>🔧 Risoluzione Problemi</h2>
+            <h2>🔧 Troubleshooting</h2>
             
-            <h3>❌ "Backend non connesso"</h3>
-            <p><strong>Causa:</strong> Il server Node.js non è in esecuzione</p>
-            <p><strong>Soluzione:</strong></p>
+            <h3>❌ "Backend not connected"</h3>
+            <p><strong>Cause:</strong> The Node.js server is not running</p>
+            <p><strong>Solution:</strong></p>
             <pre>cd <?php echo ABSPATH; ?>wp-content/plugins/tinkai-plugin/backend/
 node server.js</pre>
             
-            <h3>❌ "Errore API"</h3>
-            <p><strong>Causa:</strong> API key mancante o errata</p>
-            <p><strong>Soluzione:</strong></p>
+            <h3>❌ "API Error"</h3>
+            <p><strong>Cause:</strong> Missing or incorrect API key</p>
+            <p><strong>Solution:</strong></p>
             <ul>
-                <li>Verifica che l'API key sia inserita correttamente nelle impostazioni</li>
-                <li>Controlla che il provider selezionato corrisponda all'API key inserita</li>
-                <li>Verifica eventuali limiti di utilizzo nell'account del provider</li>
+                <li>Verify that the API key is entered correctly in the settings</li>
+                <li>Check that the selected provider matches the entered API key</li>
+                <li>Check for any usage limits in the provider's account</li>
             </ul>
             
             <h3>❌ "Rate limit exceeded"</h3>
-            <p><strong>Causa:</strong> Troppe richieste in poco tempo</p>
-            <p><strong>Soluzione:</strong></p>
-            <p>TinkAi implementa un rate limiting di 20 richieste ogni 15 minuti. Attendi qualche minuto prima di continuare.</p>
+            <p><strong>Cause:</strong> Too many requests in a short time</p>
+            <p><strong>Solution:</strong></p>
+            <p>TinkAi implements rate limiting of 20 requests every 15 minutes. Wait a few minutes before continuing.</p>
             
-            <h3>❌ Chat non si carica</h3>
-            <p><strong>Possibili cause:</strong></p>
+            <h3>❌ Chat not loading</h3>
+            <p><strong>Possible causes:</strong></p>
             <ul>
-                <li>Conflitti con altri plugin JavaScript</li>
-                <li>Theme WordPress incompatibile</li>
-                <li>File CSS/JS non caricati correttamente</li>
+                <li>Conflicts with other JavaScript plugins</li>
+                <li>Incompatible WordPress theme</li>
+                <li>CSS/JS files not loaded correctly</li>
             </ul>
-            <p><strong>Soluzione:</strong></p>
+            <p><strong>Solution:</strong></p>
             <ul>
-                <li>Disabilita temporaneamente altri plugin per identificare conflitti</li>
-                <li>Verifica nella Console del browser (F12) eventuali errori JavaScript</li>
-                <li>Prova con un theme WordPress standard (Twenty Twenty-Three)</li>
+                <li>Temporarily disable other plugins to identify conflicts</li>
+                <li>Check the browser Console (F12) for JavaScript errors</li>
+                <li>Try with a standard WordPress theme (Twenty Twenty-Three)</li>
             </ul>
         </div>
         
         <!-- Technical Architecture -->
         <div class="doc-section">
-            <h2>🏗️ Architettura Tecnica</h2>
+            <h2>🏗️ Technical Architecture</h2>
             
-            <h3>Stack Tecnologico</h3>
+            <h3>Technology Stack</h3>
             <ul>
                 <li><strong>Frontend:</strong> Vanilla JavaScript, HTML5, CSS3</li>
-                <li><strong>Backend:</strong> Node.js v18+ con Express.js</li>
+                <li><strong>Backend:</strong> Node.js v18+ with Express.js</li>
                 <li><strong>AI Providers:</strong> Google Gemini / OpenAI GPT</li>
-                <li><strong>WordPress Integration:</strong> PHP 7.4+ con AJAX proxy</li>
+                <li><strong>WordPress Integration:</strong> PHP 7.4+ with AJAX proxy</li>
             </ul>
             
-            <h3>Flusso Dati</h3>
-            <pre>Utente WordPress
+            <h3>Data Flow</h3>
+            <pre>WordPress User
     ↓
 WordPress Frontend (shortcode)
     ↓
@@ -263,25 +263,25 @@ AI Provider (Gemini/OpenAI)
     ↓
 Response + Cognitive Metrics
     ↓
-Utente WordPress</pre>
+WordPress User</pre>
             
-            <h3>Perché Node.js separato?</h3>
+            <h3>Why separate Node.js?</h3>
             <p>
-                Il backend Node.js è separato per permettere una futura migrazione a React/Angular 
-                senza dover riscrivere la logica AI. WordPress funge da layer di hosting e autenticazione.
+                The Node.js backend is separate to allow future migration to React/Angular 
+                without having to rewrite the AI logic. WordPress acts as a hosting and authentication layer.
             </p>
         </div>
         
         <!-- Support -->
         <div class="doc-section">
-            <h2>💬 Supporto</h2>
+            <h2>💬 Support</h2>
             <p>
-                Per domande, problemi o suggerimenti:
+                For questions, issues or suggestions:
             </p>
             <ul>
                 <li>📧 Email: <a href="mailto:support@tinkai.local">support@tinkai.local</a></li>
                 <li>📖 README: <code><?php echo ABSPATH; ?>wp-content/plugins/tinkai-plugin/README.md</code></li>
-                <li>🐛 Issues: Verifica prima la sezione "Risoluzione Problemi" sopra</li>
+                <li>🐛 Issues: Check the "Troubleshooting" section above first</li>
             </ul>
         </div>
         

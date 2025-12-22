@@ -11,7 +11,7 @@ $nodejs_port = $settings['nodejs_port'] ?? 3000;
 ?>
 
 <div class="wrap">
-    <h1>📊 Metriche Cognitive TinkAi</h1>
+    <h1>📊 TinkAi Cognitive Metrics</h1>
     
     <div class="tinkai-metrics-dashboard">
         
@@ -20,48 +20,48 @@ $nodejs_port = $settings['nodejs_port'] ?? 3000;
             <h2>🎯 TinkAi Score</h2>
             <div class="score-display" id="tinkai-score">
                 <div class="score-value">--</div>
-                <div class="score-label">Qualità Cognitiva</div>
+                <div class="score-label">Cognitive Quality</div>
             </div>
             <p class="description">
-                Indice di qualità delle interazioni: quanto TinkAi stimola il pensiero critico.
+                Interaction quality index: how much TinkAi stimulates critical thinking.
             </p>
         </div>
         
         <!-- Metrics Grid -->
         <div class="metrics-grid">
             <div class="metric-card">
-                <h3>💭 Riflessioni</h3>
+                <h3>💭 Reflections</h3>
                 <div class="metric-value" id="reflective-count">--</div>
                 <div class="metric-percentage" id="reflective-percentage">--%</div>
-                <p>Risposte che stimolano riflessione</p>
+                <p>Responses that stimulate reflection</p>
             </div>
             
             <div class="metric-card">
-                <h3>📝 Domande Dirette</h3>
+                <h3>📝 Direct Questions</h3>
                 <div class="metric-value" id="direct-count">--</div>
                 <div class="metric-percentage" id="direct-percentage">--%</div>
-                <p>Domande con risposta diretta</p>
+                <p>Questions with direct answer</p>
             </div>
             
             <div class="metric-card">
-                <h3>📚 Interazioni Totali</h3>
+                <h3>📚 Total Interactions</h3>
                 <div class="metric-value" id="total-count">--</div>
                 <div class="metric-percentage">100%</div>
-                <p>Tutte le conversazioni elaborate</p>
+                <p>All processed conversations</p>
             </div>
         </div>
         
         <!-- Daily Statistics -->
         <div class="tinkai-card">
-            <h2>📅 Statistiche Giornaliere (ultimi 7 giorni)</h2>
+            <h2>📅 Daily Statistics (last 7 days)</h2>
             <div id="daily-stats-container">
-                <p class="loading-message">Caricamento statistiche...</p>
+                <p class="loading-message">Loading statistics...</p>
             </div>
         </div>
         
         <!-- Charts Section -->
         <div class="tinkai-card">
-            <h2>📈 Tendenze nel Tempo</h2>
+            <h2>📈 Trends Over Time</h2>
             <div id="trends-chart-container">
                 <canvas id="trends-chart"></canvas>
             </div>
@@ -69,14 +69,14 @@ $nodejs_port = $settings['nodejs_port'] ?? 3000;
         
         <!-- Backend Status -->
         <div class="tinkai-card tinkai-status-card">
-            <h3>🔌 Stato Backend Node.js</h3>
+            <h3>🔌 Node.js Backend Status</h3>
             <div id="backend-status">
-                <span class="status-badge status-checking">⏳ Verifica in corso...</span>
+                <span class="status-badge status-checking">⏳ Checking...</span>
             </div>
             <p class="description">
                 Endpoint: <code id="backend-endpoint">http://<?php echo esc_html($nodejs_host); ?>:<?php echo esc_html($nodejs_port); ?></code>
             </p>
-            <button type="button" class="button" id="refresh-metrics">🔄 Aggiorna Metriche</button>
+            <button type="button" class="button" id="refresh-metrics">🔄 Refresh Metrics</button>
         </div>
         
     </div>
@@ -132,7 +132,7 @@ jQuery(document).ready(function($) {
     
     function renderDailyStats(dailyStats) {
         if (Object.keys(dailyStats).length === 0) {
-            $('#daily-stats-container').html('<p class="no-data">Nessun dato disponibile</p>');
+            $('#daily-stats-container').html('<p class="no-data">No data available</p>');
             return;
         }
         
@@ -147,7 +147,7 @@ jQuery(document).ready(function($) {
             
             html += '<div class="daily-stat-card">';
             html += '<div class="stat-date">' + formatDate(date) + '</div>';
-            html += '<div class="stat-value">' + totalInteractions + ' interazioni</div>';
+            html += '<div class="stat-value">' + totalInteractions + ' interactions</div>';
             html += '<div class="stat-breakdown">';
             html += '<span class="stat-reflective">💭 ' + reflective + '</span>';
             html += '<span class="stat-direct">📝 ' + direct + '</span>';
@@ -173,10 +173,10 @@ jQuery(document).ready(function($) {
     // Manual refresh
     $('#refresh-metrics').on('click', function() {
         var $btn = $(this);
-        $btn.prop('disabled', true).text('⏳ Aggiornamento...');
+        $btn.prop('disabled', true).text('⏳ Updating...');
         loadMetrics();
         setTimeout(function() {
-            $btn.prop('disabled', false).text('🔄 Aggiorna Metriche');
+            $btn.prop('disabled', false).text('🔄 Refresh Metrics');
         }, 2000);
     });
 });

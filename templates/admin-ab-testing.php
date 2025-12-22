@@ -64,15 +64,15 @@ $active_variants = count(array_filter($variants, fn($v) => $v['is_active']));
     <!-- Info Box -->
     <div class="notice notice-info">
         <p>
-            <strong>🎲 Come funziona lo smistamento A/B Test:</strong><br>
-            I variant vengono selezionati in modo <strong>casuale pesato (weighted random)</strong> basato sul campo "Weight".<br>
-            • Variant con weight = 80 sarà mostrato 80% delle volte<br>
-            • Variant con weight = 20 sarà mostrato 20% delle volte<br>
-            • Solo i variant <strong>attivi</strong> partecipano alla selezione<br>
-            • Il sistema traccia utilizzi e rating reali dai feedback degli utenti
+            <strong>🎲 How A/B Test distribution works:</strong><br>
+            Variants are selected in a <strong>weighted random</strong> manner based on the "Weight" field.<br>
+            • Variant with weight = 80 will be shown 80% of the time<br>
+            • Variant with weight = 20 will be shown 20% of the time<br>
+            • Only <strong>active</strong> variants participate in selection<br>
+            • The system tracks real uses and ratings from user feedback
         </p>
         <p>
-            <strong>💡 Best Practice:</strong> Inizia con pesi uguali (50/50), poi aumenta il peso del variant con performance migliore.
+            <strong>💡 Best Practice:</strong> Start with equal weights (50/50), then increase the weight of the better performing variant.
         </p>
     </div>
     

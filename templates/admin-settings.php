@@ -15,7 +15,7 @@ $settings = get_option('tinkai_settings', array());
         <img src="<?php echo TINKAI_PLUGIN_URL; ?>assets/logo.png" alt="TinkAi Logo" style="max-width: 200px; margin-bottom: 20px;" onerror="this.style.display='none'">
         <p class="description">
             <strong>TinkAi</strong> - The intelligence that keeps you thinking.<br>
-            Un assistente AI che stimola il pensiero critico invece di sostituirlo.
+            An AI assistant that stimulates critical thinking instead of replacing it.
         </p>
     </div>
     
@@ -28,39 +28,39 @@ $settings = get_option('tinkai_settings', array());
             
             <!-- API Configuration -->
             <div class="postbox">
-                <h2 class="hndle"><span>🔑 Configurazione API</span></h2>
+                <h2 class="hndle"><span>🔑 API Configuration</span></h2>
                 <div class="inside">
                     <table class="form-table">
                         <tr>
                             <th scope="row">
-                                <label for="api_provider">Provider AI</label>
+                                <label for="api_provider">AI Provider</label>
                             </th>
                             <td>
                                 <select name="tinkai_settings[api_provider]" id="api_provider">
                                     <option value="gemini" <?php selected($settings['api_provider'] ?? 'gemini', 'gemini'); ?>>Google Gemini</option>
                                     <option value="openai" <?php selected($settings['api_provider'] ?? 'gemini', 'openai'); ?>>OpenAI (GPT)</option>
                                 </select>
-                                <p class="description">Scegli il provider di intelligenza artificiale da utilizzare.</p>
+                                <p class="description">Choose the artificial intelligence provider to use.</p>
                             </td>
                         </tr>
                         
                         <tr>
                             <th scope="row">
-                                <label for="ai_model">Modello AI</label>
+                                <label for="ai_model">AI Model</label>
                             </th>
                             <td>
                                 <select name="tinkai_settings[ai_model]" id="ai_model">
-                                    <optgroup label="Google Gemini (Serie 3 e 2.5)">
-                                        <option value="gemini-3-pro" <?php selected($settings['ai_model'] ?? '', 'gemini-3-pro'); ?>>Gemini 3 Pro (Nuovo - Best Quality)</option>
+                                    <optgroup label="Google Gemini (Series 3 and 2.5)">
+                                        <option value="gemini-3-pro" <?php selected($settings['ai_model'] ?? '', 'gemini-3-pro'); ?>>Gemini 3 Pro (New - Best Quality)</option>
                                         <option value="gemini-2.5-pro" <?php selected($settings['ai_model'] ?? '', 'gemini-2.5-pro'); ?>>Gemini 2.5 Pro</option>
                                         
-                                        <option value="gemini-2.5-flash" <?php selected($settings['ai_model'] ?? 'gemini-2.5-flash', 'gemini-2.5-flash'); ?>>Gemini 2.5 Flash (Consigliato)</option>
+                                        <option value="gemini-2.5-flash" <?php selected($settings['ai_model'] ?? 'gemini-2.5-flash', 'gemini-2.5-flash'); ?>>Gemini 2.5 Flash (Recommended)</option>
                                         <option value="gemini-2.5-flash-lite" <?php selected($settings['ai_model'] ?? '', 'gemini-2.5-flash-lite'); ?>>Gemini 2.5 Flash-Lite</option>
                                         
                                         <option value="gemini-2.0-flash" <?php selected($settings['ai_model'] ?? '', 'gemini-2.0-flash'); ?>>Gemini 2.0 Flash (Stable)</option>
                                     </optgroup>
 
-                                    <optgroup label="OpenAI (Serie o3 e GPT-5)">
+                                    <optgroup label="OpenAI (Series o3 and GPT-5)">
                                         <option value="o3" <?php selected($settings['ai_model'] ?? '', 'o3'); ?>>OpenAI o3 (Reasoning SOTA)</option>
                                         <option value="o4-mini" <?php selected($settings['ai_model'] ?? '', 'o4-mini'); ?>>OpenAI o4-mini (Fast Reasoning)</option>
                                         <option value="o1" <?php selected($settings['ai_model'] ?? '', 'o1'); ?>>OpenAI o1</option>
@@ -71,7 +71,7 @@ $settings = get_option('tinkai_settings', array());
                                         <option value="gpt-4o" <?php selected($settings['ai_model'] ?? '', 'gpt-4o'); ?>>GPT-4o (Legacy)</option>
                                     </optgroup>
                                 </select>
-                                <p class="description">Seleziona il modello AI più recente. I modelli "Legacy" potrebbero essere deprecati a breve.</p>
+                                <p class="description">Select the most recent AI model. "Legacy" models might be deprecated soon.</p>
                             </td>
                         </tr>
                         
@@ -86,7 +86,7 @@ $settings = get_option('tinkai_settings', array());
                                        value="<?php echo esc_attr($settings['gemini_api_key'] ?? ''); ?>" 
                                        class="regular-text">
                                 <p class="description">
-                                    Ottieni una API key gratuita da 
+                                    Get a free API key from 
                                     <a href="https://makersuite.google.com/app/apikey" target="_blank">Google AI Studio</a>
                                 </p>
                             </td>
@@ -103,7 +103,7 @@ $settings = get_option('tinkai_settings', array());
                                        value="<?php echo esc_attr($settings['openai_api_key'] ?? ''); ?>" 
                                        class="regular-text">
                                 <p class="description">
-                                    Ottieni una API key da 
+                                    Get an API key from 
                                     <a href="https://platform.openai.com/api-keys" target="_blank">OpenAI Platform</a>
                                 </p>
                             </td>
@@ -127,13 +127,13 @@ $settings = get_option('tinkai_settings', array());
                                        id="nodejs_host" 
                                        value="<?php echo esc_attr($settings['nodejs_host'] ?? 'localhost'); ?>" 
                                        class="regular-text">
-                                <p class="description">Indirizzo del server Node.js (solitamente "localhost" o IP interno)</p>
+                                <p class="description">Node.js server address (usually "localhost" or internal IP)</p>
                             </td>
                         </tr>
                         
                         <tr>
                             <th scope="row">
-                                <label for="nodejs_port">Porta Node.js</label>
+                                <label for="nodejs_port">Node.js Port</label>
                             </th>
                             <td>
                                 <input type="number" 
@@ -142,15 +142,15 @@ $settings = get_option('tinkai_settings', array());
                                        value="<?php echo esc_attr($settings['nodejs_port'] ?? 3000); ?>" 
                                        min="1000" 
                                        max="65535">
-                                <p class="description">Porta su cui gira il backend Node.js (default: 3000)</p>
+                                <p class="description">Port on which the Node.js backend runs (default: 3000)</p>
                             </td>
                         </tr>
                     </table>
                     
                     <div class="tinkai-backend-status">
-                        <h4>Stato Backend:</h4>
+                        <h4>Backend Status:</h4>
                         <button type="button" class="button" id="check-backend-status">
-                            🔍 Verifica Connessione
+                            🔍 Check Connection
                         </button>
                         <span id="backend-status-result"></span>
                     </div>
@@ -159,31 +159,31 @@ $settings = get_option('tinkai_settings', array());
             
             <!-- Features Configuration -->
             <div class="postbox">
-                <h2 class="hndle"><span>🎨 Funzionalità</span></h2>
+                <h2 class="hndle"><span>🎨 Features</span></h2>
                 <div class="inside">
                     <table class="form-table">
                         <tr>
-                            <th scope="row">Metriche Cognitive</th>
+                            <th scope="row">Cognitive Metrics</th>
                             <td>
                                 <label>
                                     <input type="checkbox" 
                                            name="tinkai_settings[enable_metrics]" 
                                            value="1" 
                                            <?php checked($settings['enable_metrics'] ?? true); ?>>
-                                    Abilita dashboard metriche cognitive
+                                    Enable cognitive metrics dashboard
                                 </label>
                             </td>
                         </tr>
                         
                         <tr>
-                            <th scope="row">Feedback Utenti</th>
+                            <th scope="row">User Feedback</th>
                             <td>
                                 <label>
                                     <input type="checkbox" 
                                            name="tinkai_settings[enable_feedback]" 
                                            value="1" 
                                            <?php checked($settings['enable_feedback'] ?? true); ?>>
-                                    Abilita sistema feedback (👍/👎)
+                                    Enable feedback system (👍/👎)
                                 </label>
                             </td>
                         </tr>
@@ -196,7 +196,7 @@ $settings = get_option('tinkai_settings', array());
                                            name="tinkai_settings[enable_dark_mode]" 
                                            value="1" 
                                            <?php checked($settings['enable_dark_mode'] ?? true); ?>>
-                                    Abilita toggle tema chiaro/scuro
+                                    Enable light/dark theme toggle
                                 </label>
                             </td>
                         </tr>
@@ -206,30 +206,30 @@ $settings = get_option('tinkai_settings', array());
             
             <!-- Usage Instructions -->
             <div class="postbox">
-                <h2 class="hndle"><span>📖 Come Usare TinkAi</span></h2>
+                <h2 class="hndle"><span>📖 How to Use TinkAi</span></h2>
                 <div class="inside">
                     <h4>Shortcode:</h4>
-                    <p>Inserisci TinkAi in qualsiasi pagina o post usando lo shortcode:</p>
+                    <p>Insert TinkAi into any page or post using the shortcode:</p>
                     <code style="padding: 10px; background: #f5f5f5; display: block; margin: 10px 0;">
                         [tinkai]
                     </code>
                     
-                    <h4>Opzioni Shortcode:</h4>
+                    <h4>Shortcode Options:</h4>
                     <ul>
-                        <li><code>[tinkai theme="dark"]</code> - Tema scuro di default</li>
-                        <li><code>[tinkai height="800px"]</code> - Altezza personalizzata</li>
-                        <li><code>[tinkai width="100%"]</code> - Larghezza personalizzata</li>
+                        <li><code>[tinkai theme="dark"]</code> - Dark theme by default</li>
+                        <li><code>[tinkai height="800px"]</code> - Custom height</li>
+                        <li><code>[tinkai width="100%"]</code> - Custom width</li>
                     </ul>
                     
-                    <h4>Backend Node.js:</h4>
+                    <h4>Node.js Backend:</h4>
                     <p>
-                        <strong>⚠️ Importante:</strong> Il backend Node.js deve essere avviato separatamente.<br>
-                        Vai alla cartella <code>/wp-content/plugins/tinkai-plugin/backend/</code> e esegui:
+                        <strong>⚠️ Important:</strong> The Node.js backend must be started separately.<br>
+                        Go to the folder <code>/wp-content/plugins/tinkai-plugin/backend/</code> and run:
                     </p>
                     <code style="padding: 10px; background: #f5f5f5; display: block; margin: 10px 0;">
                         node server.js
                     </code>
-                    <p>Oppure usa PM2 per esecuzione persistente:</p>
+                    <p>Or use PM2 for persistent execution:</p>
                     <code style="padding: 10px; background: #f5f5f5; display: block; margin: 10px 0;">
                         pm2 start ecosystem.config.json
                     </code>
@@ -238,7 +238,7 @@ $settings = get_option('tinkai_settings', array());
             
         </div>
         
-        <?php submit_button('Salva Impostazioni'); ?>
+        <?php submit_button('Save Settings'); ?>
     </form>
 </div>
 
@@ -248,7 +248,7 @@ jQuery(document).ready(function($) {
         var $btn = $(this);
         var $result = $('#backend-status-result');
         
-        $btn.prop('disabled', true).text('⏳ Verifica in corso...');
+        $btn.prop('disabled', true).text('⏳ Checking...');
         $result.html('');
         
         var host = $('#nodejs_host').val();
@@ -265,16 +265,16 @@ jQuery(document).ready(function($) {
             },
             success: function(response) {
                 if (response.success) {
-                    $result.html('<span style="color: green;">✅ Backend connesso!</span>');
+                    $result.html('<span style="color: green;">✅ Backend connected!</span>');
                 } else {
                     $result.html('<span style="color: red;">❌ ' + response.data.message + '</span>');
                 }
             },
             error: function() {
-                $result.html('<span style="color: red;">❌ Errore di connessione</span>');
+                $result.html('<span style="color: red;">❌ Connection error</span>');
             },
             complete: function() {
-                $btn.prop('disabled', false).text('🔍 Verifica Connessione');
+                $btn.prop('disabled', false).text('🔍 Check Connection');
             }
         });
     });

@@ -71,36 +71,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function exportConversation() {
         if (chatHistory.length === 0) {
-            showToast('⚠️ Nessuna conversazione da esportare');
+            showToast('⚠️ No conversation to export');
             return;
         }
 
-        const timestamp = new Date().toLocaleString('it-IT');
-        let text = `TinkAi - Conversazione del ${timestamp}\n`;
+        const timestamp = new Date().toLocaleString('en-US');
+        let text = `TinkAi - Conversation from ${timestamp}\n`;
         text += `${'='.repeat(60)}\n\n`;
         
         chatHistory.forEach((msg, index) => {
-            const speaker = msg.role === 'user' ? 'Tu' : 'TinkAi';
+            const speaker = msg.role === 'user' ? 'You' : 'TinkAi';
             text += `${speaker}: ${msg.text}\n\n`;
         });
 
-        // Crea e scarica file
+        // Create and download file
         const blob = new Blob([text], { type: 'text/plain' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `tinkai-conversazione-${Date.now()}.txt`;
+        a.download = `tinkai-conversation-${Date.now()}.txt`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
         
-        showToast('📥 Conversazione esportata');
+        showToast('📥 Conversation exported');
     }
 
-    // Esponi funzioni globalmente per i pulsanti
+    // Expose functions globally for buttons
     window.clearTinkAiChat = () => {
-        if (confirm('Vuoi davvero cancellare questa conversazione?')) {
+        if (confirm('Do you really want to clear this conversation?')) {
             clearConversation();
             location.reload();
         }
@@ -159,17 +159,17 @@ document.addEventListener('DOMContentLoaded', () => {
         textSpan.textContent = text;
         messageDiv.appendChild(textSpan);
         
-        // Aggiungi feedback buttons solo per messaggi bot non di errore
+        // Add feedback buttons only for non-error bot messages
         if (!isUser && !isError) {
             const feedbackDiv = document.createElement('div');
             feedbackDiv.classList.add('feedback-buttons');
             feedbackDiv.innerHTML = `
-                <button class="feedback-btn" data-type="helpful" title="Mi ha fatto riflettere" aria-label="Risposta utile">
+                <button class="feedback-btn" data-type="helpful" title="Made me think" aria-label="Helpful answer">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                 </button>
-                <button class="feedback-btn" data-type="direct" title="Troppo diretta" aria-label="Risposta troppo diretta">
+                <button class="feedback-btn" data-type="direct" title="Too direct" aria-label="Answer too direct">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
@@ -177,7 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
             messageDiv.appendChild(feedbackDiv);
             
-            // Event listeners per feedback
+            // Event listeners for feedback
             feedbackDiv.querySelectorAll('.feedback-btn').forEach(btn => {
                 btn.addEventListener('click', () => handleFeedback(btn, messageDiv));
             });
@@ -217,18 +217,18 @@ document.addEventListener('DOMContentLoaded', () => {
         modal.innerHTML = `
             <div class="modal-overlay" onclick="document.getElementById('quick-feedback-modal').remove(); resetFeedbackButtons();"></div>
             <div class="modal-content">
-                <h2>${type === 'helpful' ? '👍 Feedback Positivo' : '👎 Feedback Negativo'}</h2>
-                <p>Aiutaci a migliorare! Raccontaci la tua esperienza:</p>
+                <h4>${type === 'helpful' ? '👍 Positive Feedback' : '👎 Negative Feedback'}</h4>
+                <p>Help us improve! Tell us about your experience:</p>
                 
                 <div class="form-group">
-                    <label for="quick-comment">Il tuo commento (opzionale):</label>
-                    <textarea id="quick-comment" rows="4" placeholder="Cosa ti è piaciuto o cosa potremmo migliorare?"></textarea>
+                    <label for="quick-comment">Your comment (optional):</label>
+                    <textarea id="quick-comment" rows="4" placeholder="What did you like or what could we improve?"></textarea>
                 </div>
                 
                 <div class="modal-actions">
-                    <button class="btn-primary" onclick="submitQuickFeedback('${type}')">Invia Feedback</button>
-                    <button class="btn-secondary" onclick="submitQuickFeedback('${type}', true)">Salta commento</button>
-                    <button class="btn-secondary" onclick="document.getElementById('quick-feedback-modal').remove(); resetFeedbackButtons();">Annulla</button>
+                    <button class="btn-primary" onclick="submitQuickFeedback('${type}')">Submit Feedback</button>
+                    <button class="btn-secondary" onclick="submitQuickFeedback('${type}', true)">Skip comment</button>
+                    <button class="btn-secondary" onclick="document.getElementById('quick-feedback-modal').remove(); resetFeedbackButtons();">Cancel</button>
                 </div>
             </div>
         `;
@@ -255,7 +255,7 @@ document.addEventListener('DOMContentLoaded', () => {
         await saveFeedback(type, comment, currentVariant);
         
         document.getElementById('quick-feedback-modal')?.remove();
-        showToast('✅ Grazie per il tuo feedback!', 2000);
+        showToast('✅ Thank you for your feedback!', 2000);
     };
 
     async function saveFeedback(type, comment = '', variant = null) {
@@ -321,7 +321,7 @@ document.addEventListener('DOMContentLoaded', () => {
         typingDiv.classList.add('message', 'bot-message', 'typing-indicator');
         typingDiv.id = 'typing-indicator';
         typingDiv.innerHTML = '<span></span><span></span><span></span>';
-        typingDiv.setAttribute('aria-label', 'TinkAi sta pensando');
+        typingDiv.setAttribute('aria-label', 'TinkAi is thinking');
         chatContainer.appendChild(typingDiv);
         chatContainer.scrollTop = chatContainer.scrollHeight;
     }
@@ -335,15 +335,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const text = userInput.value.trim();
         if (!text || isProcessing) return;
         
-        // Controlla se la quota è stata superata
+        // Check if quota has been exceeded
         if (quotaStatus.quota_exceeded || !quotaStatus.can_interact) {
-            showToast('⛔ Quota raggiunta - Non puoi inviare messaggi', 3000);
+            showToast('⛔ Quota reached - You cannot send messages', 3000);
             return;
         }
 
-        // Validazione input base
+        // Basic input validation
         if (text.length > 2000) {
-            addMessage('Il messaggio è troppo lungo. Proviamo a sintetizzare il pensiero?', false, true);
+            addMessage('The message is too long. Let\'s try to synthesize the thought?', false, true);
             return;
         }
 
@@ -431,19 +431,19 @@ document.addEventListener('DOMContentLoaded', () => {
             // Track interaction
             await trackInteraction();
             
-            showToast('💬 Risposta ricevuta');
+            showToast('💬 Response received');
 
         } catch (error) {
             console.error('Error:', error);
             removeTypingIndicator();
             
-            let errorMessage = 'Mi dispiace, sto avendo difficoltà tecniche. ';
+            let errorMessage = 'I\'m sorry, I\'m having technical difficulties. ';
             if (!navigator.onLine) {
-                errorMessage += 'Sembra che tu sia offline. Controlla la connessione.';
+                errorMessage += 'It seems you are offline. Check your connection.';
             } else if (error.message.includes('500')) {
-                errorMessage += 'Il servizio è temporaneamente non disponibile.';
+                errorMessage += 'The service is temporarily unavailable.';
             } else {
-                errorMessage += 'Riprova tra qualche istante.';
+                errorMessage += 'Please try again in a moment.';
             }
             addMessage(errorMessage, false, true);
         } finally {
@@ -579,7 +579,8 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Detect user language (default to Italian)
         const userLang = navigator.language.toLowerCase();
-        const isEnglish = userLang.startsWith('en');
+        //const isEnglish = userLang.startsWith('en');
+        const isEnglish = true;
         
         console.log('🌍 User language:', userLang, '| Using English:', isEnglish);
         
@@ -758,8 +759,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const weeklyPercent = (quotaData.weekly_used / quotaData.weekly_quota) * 100;
         
         quotaWidget.innerHTML = `
-            <div class="quota-info" title="Utilizzo giornaliero e settimanale">
-                📊 ${quotaData.daily_used}/${quotaData.daily_quota} oggi | ${quotaData.weekly_used}/${quotaData.weekly_quota} questa settimana
+            <div class="quota-info" title="Daily and weekly usage">
+                📊 ${quotaData.daily_used}/${quotaData.daily_quota} today | ${quotaData.weekly_used}/${quotaData.weekly_quota} this week
             </div>
         `;
         
@@ -782,8 +783,8 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="quota-exceeded-content">
                 <div class="quota-icon">⛔</div>
                 <div class="quota-text">
-                    <strong>Limite raggiunto</strong>
-                    <span>${quotaData.quota_message || 'Riprova più tardi'}</span>
+                    <strong>Limit reached</strong>
+                    <span>${quotaData.quota_message || 'Try again later'}</span>
                 </div>
             </div>
         `;
@@ -801,7 +802,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (input) {
             input.disabled = true;
-            input.placeholder = '⛔ Quota raggiunta - Chat non disponibile';
+            input.placeholder = '⛔ Quota reached - Chat unavailable';
             input.style.cursor = 'not-allowed';
         }
         
@@ -818,7 +819,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (input) {
             input.disabled = false;
-            input.placeholder = 'Scrivi qui il tuo pensiero...';
+            input.placeholder = 'Write your thought here...';
             input.style.cursor = 'text';
         }
         
@@ -850,21 +851,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     function initializeFeedbackModal() {
-        // Aggiungi pulsante feedback nella header
+        // Add feedback button to header
         const header = document.querySelector('.chat-header');
         if (!header) return;
         
         const feedbackBtn = document.createElement('button');
         feedbackBtn.className = 'header-btn feedback-modal-btn';
         feedbackBtn.innerHTML = '⭐ Feedback';
-        feedbackBtn.title = 'Lascia un feedback dettagliato';
+        feedbackBtn.title = 'Leave detailed feedback';
         feedbackBtn.onclick = showDetailedFeedbackModal;
         
         header.appendChild(feedbackBtn);
     }
     
     function showDetailedFeedbackModal() {
-        // Rimuovi modal esistente
+        // Remove existing modal
         const existingModal = document.getElementById('detailed-feedback-modal');
         if (existingModal) existingModal.remove();
         
@@ -874,10 +875,10 @@ document.addEventListener('DOMContentLoaded', () => {
         modal.innerHTML = `
             <div class="modal-overlay" onclick="document.getElementById('detailed-feedback-modal').remove()"></div>
             <div class="modal-content">
-                <h2>📝 Lascia un Feedback Dettagliato</h2>
+                <h2>📝 Leave Detailed Feedback</h2>
                 
                 <div class="rating-section">
-                    <label>Valutazione generale:</label>
+                    <label>Overall rating:</label>
                     <div class="star-rating">
                         ${[1,2,3,4,5].map(n => `<span class="star" data-rating="${n}">⭐</span>`).join('')}
                     </div>
@@ -885,23 +886,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 
                 <div class="form-group">
-                    <label for="what-worked">Cosa ha funzionato bene?</label>
-                    <textarea id="what-worked" rows="3" placeholder="Cosa ti è piaciuto di TinkAi?"></textarea>
+                    <label for="what-worked">What worked well?</label>
+                    <textarea id="what-worked" rows="3" placeholder="What did you like about TinkAi?"></textarea>
                 </div>
                 
                 <div class="form-group">
-                    <label for="what-failed">Cosa non ha funzionato?</label>
-                    <textarea id="what-failed" rows="3" placeholder="Cosa potrebbe essere migliorato?"></textarea>
+                    <label for="what-failed">What didn't work?</label>
+                    <textarea id="what-failed" rows="3" placeholder="What could be improved?"></textarea>
                 </div>
                 
                 <div class="form-group">
-                    <label for="suggestion">Suggerimenti:</label>
-                    <textarea id="suggestion" rows="3" placeholder="Le tue idee per migliorare TinkAi"></textarea>
+                    <label for="suggestion">Suggestions:</label>
+                    <textarea id="suggestion" rows="3" placeholder="Your ideas to improve TinkAi"></textarea>
                 </div>
                 
                 <div class="modal-actions">
-                    <button class="btn-primary" onclick="submitDetailedFeedback()">Invia Feedback</button>
-                    <button class="btn-secondary" onclick="document.getElementById('detailed-feedback-modal').remove()">Annulla</button>
+                    <button class="btn-primary" onclick="submitDetailedFeedback()">Submit Feedback</button>
+                    <button class="btn-secondary" onclick="document.getElementById('detailed-feedback-modal').remove()">Cancel</button>
                 </div>
             </div>
         `;
@@ -928,7 +929,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const suggestion = document.getElementById('suggestion').value;
         
         if (rating == 0) {
-            alert('Per favore seleziona una valutazione!');
+            alert('Please select a rating!');
             return;
         }
         
@@ -947,13 +948,13 @@ document.addEventListener('DOMContentLoaded', () => {
             formData.append('what_failed', whatFailed);
             formData.append('suggestion', suggestion);
             
-            // Aggiungi variant info se disponibile
+            // Add variant info if available
             if (currentVariant) {
                 formData.append('variant_id', currentVariant.id);
                 formData.append('variant_name', currentVariant.name);
             }
             
-            // Aggiungi ultimo messaggio se disponibile
+            // Add last message if available
             if (chatHistory.length > 0) {
                 const lastUser = chatHistory.filter(m => m.role === 'user').slice(-1)[0];
                 const lastBot = chatHistory.filter(m => m.role === 'model').slice(-1)[0];
@@ -970,14 +971,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
             
             if (data.success) {
-                showToast('✅ Grazie per il tuo feedback!', 3000);
+                showToast('✅ Thank you for your feedback!', 3000);
                 document.getElementById('detailed-feedback-modal').remove();
             } else {
-                alert('Errore nell\'invio del feedback. Riprova.');
+                alert('Error sending feedback. Try again.');
             }
         } catch (error) {
             console.error('Feedback error:', error);
-            alert('Errore nell\'invio del feedback.');
+            alert('Error sending feedback.');
         }
     };
     
@@ -987,13 +988,13 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const bugBtn = document.createElement('button');
         bugBtn.className = 'header-btn bug-report-btn';
-        bugBtn.innerHTML = '🐛 Segnala Bug';
-        bugBtn.title = 'Segnala un problema';
+        bugBtn.innerHTML = '🐛 Report Bug';
+        bugBtn.title = 'Report a problem';
         bugBtn.onclick = showBugReportModal;
         
         header.appendChild(bugBtn);
         
-        // Cattura errori console
+        // Capture console errors
         window.tinkaiConsoleLogs = [];
         const originalError = console.error;
         console.error = function(...args) {
@@ -1012,23 +1013,23 @@ document.addEventListener('DOMContentLoaded', () => {
         modal.innerHTML = `
             <div class="modal-overlay" onclick="document.getElementById('bug-report-modal').remove()"></div>
             <div class="modal-content">
-                <h2>🐛 Segnala un Bug</h2>
+                <h2>🐛 Report a Bug</h2>
                 
                 <div class="form-group">
-                    <label for="bug-description">Descrivi il problema:</label>
-                    <textarea id="bug-description" rows="5" required placeholder="Cosa non ha funzionato? Quando è successo?"></textarea>
+                    <label for="bug-description">Describe the problem:</label>
+                    <textarea id="bug-description" rows="5" required placeholder="What didn't work? When did it happen?"></textarea>
                 </div>
                 
                 <div class="form-group">
                     <label>
                         <input type="checkbox" id="include-logs" checked>
-                        Includi log della console (aiuta a risolvere il problema)
+                        Include console logs (helps solve the problem)
                     </label>
                 </div>
                 
                 <div class="modal-actions">
-                    <button class="btn-primary" onclick="submitBugReport()">Invia Segnalazione</button>
-                    <button class="btn-secondary" onclick="document.getElementById('bug-report-modal').remove()">Annulla</button>
+                    <button class="btn-primary" onclick="submitBugReport()">Submit Report</button>
+                    <button class="btn-secondary" onclick="document.getElementById('bug-report-modal').remove()">Cancel</button>
                 </div>
             </div>
         `;
@@ -1041,7 +1042,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const includeLogs = document.getElementById('include-logs').checked;
         
         if (!description.trim()) {
-            alert('Descrivi il problema prima di inviare!');
+            alert('Describe the problem before submitting!');
             return;
         }
         
@@ -1070,14 +1071,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
             
             if (data.success) {
-                showToast('✅ Bug segnalato! Grazie per il tuo aiuto.', 3000);
+                showToast('✅ Bug reported! Thank you for your help.', 3000);
                 document.getElementById('bug-report-modal').remove();
             } else {
-                alert('Errore nell\'invio della segnalazione.');
+                alert('Error sending the report.');
             }
         } catch (error) {
             console.error('Bug report error:', error);
-            alert('Errore nell\'invio della segnalazione.');
+            alert('Error sending the report.');
         }
     };
 });

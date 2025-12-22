@@ -14,52 +14,159 @@ if (isset($_POST['action']) && current_user_can('manage_options')) {
     
     $user_id = intval($_POST['user_id']);
     
+    // Check if user exists in tinkai_users table
+    $exists = $wpdb->get_var($wpdb->prepare(
+        "SELECT id FROM $table WHERE user_id = %d", $user_id
+    ));
+    
     switch ($_POST['action']) {
         case 'update_quota':
-            $wpdb->update($table, 
-                array(
+            if ($exists) {
+                $wpdb->update($table, 
+                    array(
+                        'daily_quota' => intval($_POST['daily_quota']),
+                        'weekly_quota' => intval($_POST['weekly_quota'])
+                    ),
+                    array('user_id' => $user_id)
+                );
+            } else {
+                // Create new record
+                $wp_user = get_userdata($user_id);
+                $wp_role = !empty($wp_user->roles) ? $wp_user->roles[0] : 'subscriber';
+                
+                $wpdb->insert($table, array(
+                    'user_id' => $user_id,
+                    'role' => $wp_role,
+                    'status' => 'active',
                     'daily_quota' => intval($_POST['daily_quota']),
                     'weekly_quota' => intval($_POST['weekly_quota'])
-                ),
-                array('user_id' => $user_id)
-            );
+                ));
+            }
             echo '<div class="notice notice-success"><p>Quotas updated successfully!</p></div>';
             break;
             
         case 'change_status':
-            $wpdb->update($table,
-                array('status' => sanitize_text_field($_POST['status'])),
-                array('user_id' => $user_id)
-            );
+            if ($exists) {
+                $wpdb->update($table,
+                    array('status' => sanitize_text_field($_POST['status'])),
+                    array('user_id' => $user_id)
+                );
+            } else {
+                // Create new record
+                $wp_user = get_userdata($user_id);
+                $wp_role = !empty($wp_user->roles) ? $wp_user->roles[0] : 'subscriber';
+                
+                $wpdb->insert($table, array(
+                    'user_id' => $user_id,
+                    'role' => $wp_role,
+                    'status' => sanitize_text_field($_POST['status'])
+                ));
+            }
             echo '<div class="notice notice-success"><p>User status updated!</p></div>';
             break;
             
         case 'reset_quotas':
-            $wpdb->update($table,
-                array('daily_used' => 0, 'weekly_used' => 0),
-                array('user_id' => $user_id)
-            );
-            echo '<div class="notice notice-success"><p>Quotas reset!</p></div>';
+            if ($exists) {
+                $wpdb->update($table,
+                    array('daily_used' => 0, 'weekly_used' => 0),
+                    array('user_id' => $user_id)
+                );
+                echo '<div class="notice notice-success"><p>Quotas reset!</p></div>';
+            }
             break;
     }
 }
 
-// Get users
+// Get role labels for display
+function get_role_display_name($role) {
+    $roles = array(
+        'administrator' => 'Administrator',
+        'editor' => 'Editor',
+        'author' => 'Author',
+        'contributor' => 'Contributor',
+        'subscriber' => 'Subscriber',
+        'beta_tester' => 'Beta Tester'
+    );
+    return isset($roles[$role]) ? $roles[$role] : ucfirst($role);
+}
+
+// Get default quotas based on WordPress role
+function get_default_quotas($role) {
+    $quotas = array(
+        'administrator' => array('daily' => 500, 'weekly' => 3000),
+        'editor' => array('daily' => 200, 'weekly' => 1000),
+        'author' => array('daily' => 100, 'weekly' => 500),
+        'contributor' => array('daily' => 50, 'weekly' => 300),
+        'subscriber' => array('daily' => 10, 'weekly' => 150),
+    );
+    return isset($quotas[$role]) ? $quotas[$role] : array('daily' => 10, 'weekly' => 150);
+}
+
+// Get ALL WordPress users with their TinkAi data (if exists)
 $users = $wpdb->get_results("
-    SELECT t.*, u.display_name, u.user_email
-    FROM $table t
-    LEFT JOIN {$wpdb->users} u ON t.user_id = u.ID
-    ORDER BY t.total_interactions DESC
+    SELECT 
+        u.ID as user_id,
+        u.display_name,
+        u.user_email,
+        t.id,
+        t.role,
+        t.status,
+        t.daily_quota,
+        t.weekly_quota,
+        t.daily_used,
+        t.weekly_used,
+        t.total_interactions,
+        t.last_interaction
+    FROM {$wpdb->users} u
+    LEFT JOIN $table t ON u.ID = t.user_id
+    ORDER BY t.total_interactions DESC, u.display_name ASC
 ", ARRAY_A);
+
+// Get WordPress user meta for roles
+foreach ($users as &$user) {
+    $wp_user = get_userdata($user['user_id']);
+    $wp_role = !empty($wp_user->roles) ? $wp_user->roles[0] : 'subscriber';
+    
+    // If user has no TinkAi record, set defaults based on WP role
+    if (!$user['id']) {
+        $quotas = get_default_quotas($wp_role);
+        $user['role'] = $wp_role;
+        $user['status'] = 'active';
+        $user['daily_quota'] = $quotas['daily'];
+        $user['weekly_quota'] = $quotas['weekly'];
+        $user['daily_used'] = 0;
+        $user['weekly_used'] = 0;
+        $user['total_interactions'] = 0;
+        $user['last_interaction'] = null;
+    }
+}
+unset($user);
 
 // Stats
 $total_users = count($users);
 $active_users = count(array_filter($users, fn($u) => $u['status'] === 'active'));
 $total_interactions = array_sum(array_column($users, 'total_interactions'));
+
+// Get stats by role
+$subscribers = count(array_filter($users, fn($u) => $u['role'] === 'subscriber'));
+$contributors = count(array_filter($users, fn($u) => $u['role'] === 'contributor'));
+$other_roles = $total_users - $subscribers - $contributors;
 ?>
 
 <div class="wrap">
     <h1>👥 User Management</h1>
+    
+    <div class="notice notice-info">
+        <p><strong>ℹ️ Default Quota by Role:</strong></p>
+        <ul style="margin: 10px 0; padding-left: 20px;">
+            <li><strong>Subscriber:</strong> 10 messages/day, 150/week</li>
+            <li><strong>Contributor:</strong> 50 messages/day, 300/week</li>
+            <li><strong>Author:</strong> 100 messages/day, 500/week</li>
+            <li><strong>Editor:</strong> 200 messages/day, 1000/week</li>
+            <li><strong>Administrator:</strong> 500 messages/day, 3000/week</li>
+        </ul>
+        <p><em>Note: You can customize quotas for individual users below.</em></p>
+    </div>
     
     <!-- Stats -->
     <div class="user-stats">
@@ -71,6 +178,18 @@ $total_interactions = array_sum(array_column($users, 'total_interactions'));
         <div class="stat-card">
             <h3>Active Users</h3>
             <div class="stat-value"><?php echo $active_users; ?></div>
+        </div>
+        
+        <div class="stat-card">
+            <h3>Subscribers</h3>
+            <div class="stat-value"><?php echo $subscribers; ?></div>
+            <small style="color: #646970;">10 msg/day</small>
+        </div>
+        
+        <div class="stat-card">
+            <h3>Contributors+</h3>
+            <div class="stat-value"><?php echo $contributors; ?></div>
+            <small style="color: #646970;">50 msg/day</small>
         </div>
         
         <div class="stat-card">
@@ -114,6 +233,9 @@ $total_interactions = array_sum(array_column($users, 'total_interactions'));
                         <td>
                             <strong><?php echo esc_html($user['display_name']); ?></strong>
                             <br><small>ID: <?php echo $user['user_id']; ?></small>
+                            <?php if (!$user['id']): ?>
+                                <br><small style="color: #999;">⚪ Never used chat</small>
+                            <?php endif; ?>
                         </td>
                         <td><?php echo esc_html($user['user_email']); ?></td>
                         <td>
@@ -121,7 +243,11 @@ $total_interactions = array_sum(array_column($users, 'total_interactions'));
                                 <?php echo ucfirst($user['status']); ?>
                             </span>
                         </td>
-                        <td><?php echo esc_html($user['role']); ?></td>
+                        <td>
+                            <span class="role-badge role-<?php echo $user['role']; ?>">
+                                <?php echo get_role_display_name($user['role']); ?>
+                            </span>
+                        </td>
                         <td>
                             <?php echo $user['daily_used']; ?> / <?php echo $user['daily_quota']; ?>
                             <div class="quota-bar">
@@ -233,6 +359,21 @@ $total_interactions = array_sum(array_column($users, 'total_interactions'));
 .status-active { background: #d4edda; color: #155724; }
 .status-suspended { background: #fff3cd; color: #856404; }
 .status-blacklisted { background: #f8d7da; color: #721c24; }
+
+.role-badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.role-administrator { background: #e3f2fd; color: #1565c0; }
+.role-editor { background: #f3e5f5; color: #6a1b9a; }
+.role-author { background: #fff3e0; color: #e65100; }
+.role-contributor { background: #e8f5e9; color: #2e7d32; }
+.role-subscriber { background: #fce4ec; color: #c2185b; }
+.role-beta_tester { background: #e0f2f1; color: #00695c; }
 
 .quota-bar {
     width: 100%;

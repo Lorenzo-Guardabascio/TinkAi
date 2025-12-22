@@ -755,11 +755,20 @@ class TinkAi_Plugin {
         ), ARRAY_A);
         
         if (!$user_data) {
+            // Get WordPress user role
+            $wp_user = get_userdata($user_id);
+            $wp_role = !empty($wp_user->roles) ? $wp_user->roles[0] : 'subscriber';
+            
+            // Get default quotas based on role
+            $quotas = $this->get_role_quotas($wp_role);
+            
             // Create new user record
             $wpdb->insert($table, array(
                 'user_id' => $user_id,
-                'role' => 'beta_tester',
-                'status' => 'active'
+                'role' => $wp_role,
+                'status' => 'active',
+                'daily_quota' => $quotas['daily'],
+                'weekly_quota' => $quotas['weekly']
             ));
             $user_data = $wpdb->get_row($wpdb->prepare(
                 "SELECT * FROM $table WHERE user_id = %d", $user_id
@@ -790,21 +799,21 @@ class TinkAi_Plugin {
         $weekly_reset_time = $last_interaction + 604800;
         $days_until_weekly_reset = max(0, ceil(($weekly_reset_time - $now) / 86400));
         
-        // Crea messaggio appropriato
+        // Create appropriate message
         $quota_message = '';
         if ($daily_exceeded) {
             $quota_message = sprintf(
-                '⏰ Hai raggiunto il limite giornaliero di %d utilizzi. La quota si resetterà tra %d %s. In caso di necessità, contatta gli amministratori.',
-                $user_data['daily_quota'],
-                $hours_until_daily_reset,
-                $hours_until_daily_reset == 1 ? 'ora' : 'ore'
+            '⏰ You have reached the daily limit of %d uses. The quota will reset in %d %s. If needed, please contact the administrators.',
+            $user_data['daily_quota'],
+            $hours_until_daily_reset,
+            $hours_until_daily_reset == 1 ? 'hour' : 'hours'
             );
         } elseif ($weekly_exceeded) {
             $quota_message = sprintf(
-                '📅 Hai raggiunto il limite settimanale di %d utilizzi. La quota si resetterà tra %d %s. In caso di necessità, contatta gli amministratori.',
-                $user_data['weekly_quota'],
-                $days_until_weekly_reset,
-                $days_until_weekly_reset == 1 ? 'giorno' : 'giorni'
+            '📅 You have reached the weekly limit of %d uses. The quota will reset in %d %s. If needed, please contact the administrators.',
+            $user_data['weekly_quota'],
+            $days_until_weekly_reset,
+            $days_until_weekly_reset == 1 ? 'day' : 'days'
             );
         }
         
@@ -843,10 +852,19 @@ class TinkAi_Plugin {
         ));
         
         if (!$exists) {
+            // Get WordPress user role
+            $wp_user = get_userdata($user_id);
+            $wp_role = !empty($wp_user->roles) ? $wp_user->roles[0] : 'subscriber';
+            
+            // Get default quotas based on role
+            $quotas = $this->get_role_quotas($wp_role);
+            
             $wpdb->insert($table, array(
                 'user_id' => $user_id,
-                'role' => 'beta_tester',
+                'role' => $wp_role,
                 'status' => 'active',
+                'daily_quota' => $quotas['daily'],
+                'weekly_quota' => $quotas['weekly'],
                 'daily_used' => 1,
                 'weekly_used' => 1,
                 'total_interactions' => 1,
@@ -926,6 +944,22 @@ class TinkAi_Plugin {
         }
         
         wp_send_json_success(array('saved' => true));
+    }
+    
+    /**
+     * Get default quotas based on WordPress role
+     */
+    private function get_role_quotas($role) {
+        $quotas = array(
+            'administrator' => array('daily' => 500, 'weekly' => 3000),
+            'editor' => array('daily' => 200, 'weekly' => 1000),
+            'author' => array('daily' => 100, 'weekly' => 500),
+            'contributor' => array('daily' => 50, 'weekly' => 300),
+            'subscriber' => array('daily' => 10, 'weekly' => 150),
+            'beta_tester' => array('daily' => 50, 'weekly' => 300),
+        );
+        
+        return isset($quotas[$role]) ? $quotas[$role] : array('daily' => 10, 'weekly' => 150);
     }
     
     /**
